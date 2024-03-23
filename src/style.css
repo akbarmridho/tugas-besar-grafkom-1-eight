@@ -128,17 +128,77 @@ table {
   border-spacing: 0;
 }
 
-.container {
+h1 {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.title {
+  height: 10vh;
+
+  font-size: 30px;
+  font-weight: bold;
+  background-color: burlywood;
   display: flex;
+  align-items: center;
+  justify-content: center;
+  color: black;
+}
+
+.container {
+  width: 100vw;
+  height: 90vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu {
+  width: 20%;
+  height: 100%;
+
+  background-color: azure;
+
+  padding: 20px;
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
+}
+
+.model-btn-container {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.model-btn {
+  width: fit-content;
+}
+
+.model-btn img {
+  width: 25px;
+  height: 25px;
 }
 
 #canvas {
-  width: 1280px;
-  height: 600px;
-  margin: 2rem auto 0 auto;
-  background-color: white;
+  width: 60%;
+  height: 100%;
+  background-color: pink;
+}
+
+.layers {
+  width: 20%;
+  height: 100%;
+
+  background-color: beige;
+
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 body {
-  background-color: black;
+  background-color: white;
 }

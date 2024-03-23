@@ -1,18 +1,51 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebGL Part 1: 2D Primitive Elements</title>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>WebGL Part 1: 2D Primitive Elements</title>
-</head>
+  <body>
+    <div class="title">Eight's WebGL 2D Primitive Elements</div>
+    <div class="container">
+      <!-- Menu -->
+      <div class="menu">
+        <!-- Model -->
+        <div class="model">
+          <h1>Model</h1>
 
-<body>
-  <div class="container">
-    <canvas id="canvas"></canvas>
-  </div>
-  <script type="module" src="/src/main.js"></script>
-</body>
+          <div class="model-btn-container">
+            <button id="model-line" class="model-btn">
+              <img src="./public/ic_line.svg" />
+            </button>
+            <button id="model-square" class="model-btn">
+              <img src="./public/ic_square.svg" />
+            </button>
+            <button id="model-rectangle" class="model-btn">
+              <img src="./public/ic_rectangle.svg" />
+            </button>
+            <button id="model-polygon" class="model-btn">
+              <img src="./public/ic_polygon.svg" />
+            </button>
+          </div>
+        </div>
 
+        <!-- Settings -->
+        <div class="settings">
+          <h1>Settings</h1>
+        </div>
+      </div>
+
+      <!-- Canvas -->
+      <canvas id="canvas"></canvas>
+
+      <!-- Layers -->
+      <div class="layers">
+        <h1>Layers</h1>
+      </div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
 </html>
