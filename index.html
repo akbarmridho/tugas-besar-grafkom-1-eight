@@ -8,43 +8,34 @@
   <title>WebGL Part 1: 2D Primitive Elements</title>
 </head>
 
-<body>
-  <div class="title">Eight's WebGL 2D Primitive Elements</div>
-  <div class="container">
-    <!-- Menu -->
-    <div class="menu">
-      <!-- Model -->
-      <div class="model">
-        <h1>Model</h1>
+<body class="bg-primary">
+  <div class="flex flex-col bg-tertiary h-screen">
+    <h1 class="flex-none bg-primary text-md font-medium text-primary-fg text-center py-2 mb-1 shadow-xl">Eight's WebGL 2D Primitive Elements</h1>
+    <div class="flex flex-row h-full p-1 justify-between items-center">
+      <div class="flex flex-col h-full bg-primary w-fit p-1 rounded-md gap-1.5 py-4 px-1 shadow-xl">
+        <button class="hover:bg-secondary hover:bg-opacity-50 rounded-sm p-1">
+          <i data-lucide="slash" class="size-5 text-primary-fg" ></i>
+        </button>
+        <button class="hover:bg-secondary hover:bg-opacity-50 rounded-sm p-1">
+          <i data-lucide="square" class="size-5 text-primary-fg" ></i>
+        </button>
+        <button class="hover:bg-secondary hover:bg-opacity-50 rounded-sm p-1">
+          <i data-lucide="rectangle-horizontal" class="size-5 text-primary-fg" ></i>
+        </button>
+        <button class="hover:bg-secondary hover:bg-opacity-50 rounded-sm p-1">
+          <i data-lucide="pentagon" class="size-5 text-primary-fg" ></i>
+        </button>
+      </div>
+      <div class="w-[80vw] h-full flex items-center justify-center rounded-md">
+        <canvas class="w-[40vw] h-[40vw] bg-white" id="canvas" width="400" height="400">
 
-        <div class="model-btn-container">
-          <button id="model-line" class="model-btn">
-            <img src="./ic_line.svg" />
-          </button>
-          <button id="model-square" class="model-btn">
-            <img src="./ic_square.svg" />
-          </button>
-          <button id="model-rectangle" class="model-btn">
-            <img src="./ic_rectangle.svg" />
-          </button>
-          <button id="model-polygon" class="model-btn">
-            <img src="./ic_polygon.svg" />
-          </button>
+        </canvas>
+      </div>
+      <div class="bg-primary h-full w-fit p-4 flex-col rounded-md shadow-xl">
+        <div id="tweakpane-container" class="w-fit">
+
         </div>
       </div>
-
-      <!-- Settings -->
-      <div class="settings">
-        <h1>Settings</h1>
-      </div>
-    </div>
-
-    <!-- Canvas -->
-    <canvas id="canvas"></canvas>
-
-    <!-- Layers -->
-    <div class="layers">
-      <h1>Layers</h1>
     </div>
   </div>
   <script type="module" src="/src/main.ts"></script>
