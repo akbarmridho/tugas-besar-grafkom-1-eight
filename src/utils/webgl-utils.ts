@@ -1,3 +1,6 @@
+const RENDER_ATTRIBUTE_A_POSITION = 'a_position';
+const RENDER_ATTRIBUTE_COLOR = 'vertColor';
+
 export class WebglUtils {
   public gl: WebGLRenderingContext;
   // @ts-ignore
@@ -88,7 +91,7 @@ export class WebglUtils {
 
   render(
     attribute = 'a_position',
-    positions: number[] = [],
+    positions: Float32Array,
     size = 2,
     type = this.gl.FLOAT,
     isNormalized = false
@@ -119,5 +122,13 @@ export class WebglUtils {
       stride,
       offset
     );
+  }
+
+  renderVertex(position: Float32Array, size = 2) {
+    this.render(RENDER_ATTRIBUTE_A_POSITION, position, size);
+  }
+
+  renderColor(colors: Float32Array, size = 2) {
+    this.render(RENDER_ATTRIBUTE_COLOR, colors, size);
   }
 }
