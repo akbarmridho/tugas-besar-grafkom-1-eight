@@ -7,6 +7,8 @@ import {
   FRAGMENT_SHADER_SOURCE,
   VERTEX_SHADER_SOURCE
 } from './constant/gl-script.ts';
+import { Line, Shape, shapeType } from './shape.ts';
+import { getCoordinate } from './utils';
 
 document.addEventListener('DOMContentLoaded', function () {
   onDocumentReady();
@@ -18,7 +20,10 @@ const shapes: Shape[] = [];
 
 const onDocumentReady = () => {
   // init variables
-  const tweakpane = new Tweakpane();
+  let type: shapeType = '';
+  let isMouseDown = false;
+  const tweakpane = new Tweakpane(shapes);
+  const lineBtn = document.getElementById('line-btn');
   const canvas = document.getElementById('canvas') as HTMLCanvasElement;
   if (!canvas) return;
 
@@ -36,21 +41,48 @@ const onDocumentReady = () => {
   );
   webglUtils.createProgram(vertexShader, fragmentShader);
 
-  const positions: number[] = [
-    -0.1, 0.1, -0.1, -0.1, 0.1, 0.1, -0.1, -0.1, 0.1, -0.1, 0.1, 0.1
-  ];
-
-  webglUtils.render('a_position', positions, 2);
-
   // loop render
   const render = () => {
-    // coba coba doang
     webglUtils.clear();
-    webglUtils.render('a_position', positions, 2);
-    gl.drawArrays(gl.TRIANGLES, 0, 6);
+    shapes.forEach((shape) => {
+      shape.render(webglUtils);
+    });
     window.requestAnimationFrame(render);
   };
 
   // Start the rendering loop
   render();
+
+  if (lineBtn) {
+    lineBtn.onclick = (e: MouseEvent) => {
+      e.preventDefault();
+      type = 'LINE';
+    };
+  }
+
+  // canvas logic
+  canvas.onmousedown = (e: MouseEvent) => {
+    isMouseDown = true;
+
+    const coordinate = getCoordinate(canvas, e);
+    switch (type) {
+      case 'LINE':
+        shapes.push(new Line(coordinate, tweakpane.selectedColor));
+        break;
+    }
+  };
+
+  canvas.onmousemove = (e: MouseEvent) => {
+    if (!isMouseDown) return;
+    const coordinate = getCoordinate(canvas, e);
+    const lastShape = shapes[shapes.length - 1];
+    if (type == 'LINE' && lastShape instanceof Line) {
+      const line = lastShape as Line;
+      line.updateEndCoordinate(coordinate);
+    }
+  };
+
+  canvas.onmouseup = () => {
+    isMouseDown = false;
+  };
 };

@@ -13,7 +13,7 @@
     <h1 class="flex-none bg-primary text-md font-medium text-primary-fg text-center py-2 mb-1 shadow-xl">Eight's WebGL 2D Primitive Elements</h1>
     <div class="flex flex-row h-full p-1 justify-between items-center">
       <div class="flex flex-col h-full bg-primary w-fit p-1 rounded-md gap-1.5 py-4 px-1 shadow-xl">
-        <button class="hover:bg-secondary hover:bg-opacity-50 rounded-sm p-1">
+        <button class="hover:bg-secondary hover:bg-opacity-50 rounded-sm p-1" id="line-btn">
           <i data-lucide="slash" class="size-5 text-primary-fg" ></i>
         </button>
         <button class="hover:bg-secondary hover:bg-opacity-50 rounded-sm p-1">
@@ -27,7 +27,7 @@
         </button>
       </div>
       <div class="w-[80vw] h-full flex items-center justify-center rounded-md">
-        <canvas class="w-[40vw] h-[40vw] bg-white" id="canvas" width="400" height="400">
+        <canvas class="bg-white" id="canvas" width="800" height="800">
 
         </canvas>
       </div>
