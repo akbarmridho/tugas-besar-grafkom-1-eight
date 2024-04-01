@@ -1,6 +1,8 @@
 import { BladeApi, ButtonApi, Pane } from 'tweakpane';
 import { BindingApi } from '@tweakpane/core';
 import { Shape } from '../shape.ts';
+import { normalizeRgbColor, RGB } from './index.ts';
+import { changeShapeSvgColor } from '../fragment/shapes-list.ts';
 
 const COLOR_PARAMS = {
   color: { r: 255, g: 0, b: 55 }
@@ -27,7 +29,7 @@ export class Tweakpane {
   saveButton: ButtonApi;
   shapes: Shape[];
   // @ts-ignore
-  selectedColor: number[];
+  selectedColor: RGB;
 
   constructor(shapes: Shape[]) {
     this.shapes = shapes;
@@ -67,11 +69,11 @@ export class Tweakpane {
     this.saveButton = this.pane.addButton(SAVE_BUTTON_PARAMS);
   }
 
-  changeColor = ({ r, g, b }: { r: number; g: number; b: number }) => {
-    const color = [r / 255, g / 255, b / 255, 1];
+  changeColor = (color: RGB) => {
     this.selectedColor = color;
     this.changeShapeProperties((shape) => {
-      shape.setColor(color);
+      shape.setColor(normalizeRgbColor(color));
+      changeShapeSvgColor(shape);
     });
   };
 

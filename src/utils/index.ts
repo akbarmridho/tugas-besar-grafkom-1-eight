@@ -1,3 +1,8 @@
+export interface RGB {
+  r: number;
+  g: number;
+  b: number;
+}
 export function getCoordinate(canvas: HTMLCanvasElement, e: MouseEvent) {
   const rect = canvas.getBoundingClientRect();
   const scaleX = 2 / canvas.width;
@@ -10,4 +15,17 @@ export function getCoordinate(canvas: HTMLCanvasElement, e: MouseEvent) {
   const y = scaleY * yRelativeToCanvas + 1;
 
   return [x, y];
+}
+
+export function normalizeRgbColor({ r, g, b }: RGB) {
+  return [r / 255, g / 255, b / 255, 1];
+}
+
+export function rgbToHex({ r, g, b }: RGB) {
+  return (
+    '#' +
+    ((1 << 24) + (Math.floor(r) << 16) + (Math.floor(g) << 8) + Math.floor(b))
+      .toString(16)
+      .slice(1)
+  );
 }

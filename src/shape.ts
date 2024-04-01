@@ -1,7 +1,7 @@
 import { WebglUtils } from './utils/webgl-utils.ts';
 import { flattenMatrix } from './utils/vector.ts';
+import { shapeType } from './utils/interfaces.ts';
 
-export type shapeType = 'LINE' | 'RECTANGLE' | 'POLYGON' | 'SQUARE' | '';
 export abstract class Shape {
   protected coordinates: number[][];
   protected colors: number[][];
@@ -11,6 +11,14 @@ export abstract class Shape {
   protected centroid: number[];
   protected isActive: boolean;
   protected type: shapeType;
+  protected id: string = '';
+  protected name: string = '';
+  protected icon:
+    | 'square'
+    | 'slash'
+    | 'rectangle-horizontal'
+    | 'pentagon'
+    | '' = '';
 
   constructor(
     coordinates?: number[][],
@@ -59,6 +67,18 @@ export abstract class Shape {
     return this.centroid;
   }
 
+  getName() {
+    return this.name;
+  }
+
+  getId() {
+    return this.id;
+  }
+
+  getIcon() {
+    return this.icon;
+  }
+
   setColor(newColor: number[]) {
     for (let i = 0; i < this.colors.length; i++) {
       this.colors[i] = newColor;
@@ -68,14 +88,18 @@ export abstract class Shape {
   getIsActive() {
     return this.isActive;
   }
+
+  setIsActive(isActive: boolean) {
+    this.isActive = isActive;
+  }
   abstract render(webglUtils: WebglUtils): void;
   abstract translate(x: number, y: number): void;
   abstract scale(x: number, y: number): void;
   abstract rotate(degree: number): void;
-  abstract setActive(active: boolean): void;
 }
 
 export class Line extends Shape {
+  public static count = 0;
   /**
    * Constructs a line
    *
@@ -84,7 +108,11 @@ export class Line extends Shape {
    */
   constructor(startCoordinate: number[], color: number[]) {
     super();
+    this.icon = 'slash';
     this.type = 'LINE';
+    Line.count += 1;
+    this.id = 'line-' + Line.count;
+    this.name = 'Line ' + Line.count;
     for (let i = 0; i < 2; i++) {
       this.coordinates.push(startCoordinate);
       this.colors.push(color);

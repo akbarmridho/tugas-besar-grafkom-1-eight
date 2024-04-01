@@ -7,8 +7,11 @@ import {
   FRAGMENT_SHADER_SOURCE,
   VERTEX_SHADER_SOURCE
 } from './constant/gl-script.ts';
-import { Line, Shape, shapeType } from './shape.ts';
-import { getCoordinate } from './utils';
+import { Line, Shape } from './shape.ts';
+import { getCoordinate, normalizeRgbColor, rgbToHex } from './utils';
+import { handleOnShapeAdded } from './fragment/shapes-list.ts';
+import { Config } from './utils/interfaces.ts';
+import { onShapeButtonClick } from './fragment/shape-btn.ts';
 
 document.addEventListener('DOMContentLoaded', function () {
   onDocumentReady();
@@ -20,10 +23,11 @@ const shapes: Shape[] = [];
 
 const onDocumentReady = () => {
   // init variables
-  let type: shapeType = '';
-  let isMouseDown = false;
+  const config: Config = {
+    type: '',
+    isMouseDown: false
+  };
   const tweakpane = new Tweakpane(shapes);
-  const lineBtn = document.getElementById('line-btn');
   const canvas = document.getElementById('canvas') as HTMLCanvasElement;
   if (!canvas) return;
 
@@ -50,39 +54,42 @@ const onDocumentReady = () => {
     window.requestAnimationFrame(render);
   };
 
-  // Start the rendering loop
   render();
 
-  if (lineBtn) {
-    lineBtn.onclick = (e: MouseEvent) => {
-      e.preventDefault();
-      type = 'LINE';
-    };
-  }
+  onShapeButtonClick('line-btn', 'LINE', config);
+  onShapeButtonClick('square-btn', 'SQUARE', config);
+  onShapeButtonClick('rectangle-btn', 'RECTANGLE', config);
+  onShapeButtonClick('polygon-btn', 'POLYGON', config);
 
   // canvas logic
   canvas.onmousedown = (e: MouseEvent) => {
-    isMouseDown = true;
-
+    config.isMouseDown = true;
+    let newShape: Shape | null = null;
     const coordinate = getCoordinate(canvas, e);
-    switch (type) {
+    const selectedColor = tweakpane.selectedColor;
+    switch (config.type) {
       case 'LINE':
-        shapes.push(new Line(coordinate, tweakpane.selectedColor));
+        shapes.push(
+          (newShape = new Line(coordinate, normalizeRgbColor(selectedColor)))
+        );
         break;
+    }
+    if (!!newShape) {
+      handleOnShapeAdded(newShape, rgbToHex(selectedColor), shapes, config);
     }
   };
 
   canvas.onmousemove = (e: MouseEvent) => {
-    if (!isMouseDown) return;
+    if (!config.isMouseDown) return;
     const coordinate = getCoordinate(canvas, e);
     const lastShape = shapes[shapes.length - 1];
-    if (type == 'LINE' && lastShape instanceof Line) {
+    if (config.type == 'LINE' && lastShape instanceof Line) {
       const line = lastShape as Line;
       line.updateEndCoordinate(coordinate);
     }
   };
 
   canvas.onmouseup = () => {
-    isMouseDown = false;
+    config.isMouseDown = false;
   };
 };
