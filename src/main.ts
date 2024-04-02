@@ -3,7 +3,7 @@ import { initializeIcons } from './utils/lucide-icons.ts';
 
 import { Tweakpane } from './utils/tweakpane.ts';
 import { WebglUtils } from './utils/webgl-utils.ts';
-import { Line, Rectangle, Shape, Square } from './shape.ts';
+import { Line, Rectangle, Shape, Square, Polygon } from './shape.ts';
 import { getCoordinate, normalizeRgbColor, rgbToHex } from './utils';
 import { handleOnShapeAdded } from './components/shapes-list.ts';
 import { Config } from './utils/interfaces.ts';
@@ -28,7 +28,8 @@ const onDocumentReady = () => {
   // init variables
   const config: Config = {
     type: '',
-    isMouseDown: false
+    isMouseDown: false,
+    isDrawingPolygon: false
   };
   const tweakpane = new Tweakpane(shapes);
   const canvas = document.getElementById('canvas') as HTMLCanvasElement;
@@ -90,6 +91,14 @@ const onDocumentReady = () => {
           (newShape = new Square(coordinate, normalizeRgbColor(selectedColor)))
         );
         break;
+      case 'POLYGON':
+        if (!config.isDrawingPolygon) {
+          shapes.push(
+              (newShape = new Polygon(coordinate, normalizeRgbColor(selectedColor)))
+          )
+          config.isDrawingPolygon = true
+        }
+        break;
     }
     if (!!newShape) {
       handleOnShapeAdded(newShape, rgbToHex(selectedColor), shapes, config);
@@ -97,9 +106,16 @@ const onDocumentReady = () => {
   };
 
   canvas.onmousemove = (e: MouseEvent) => {
-    if (!config.isMouseDown) return;
     const coordinate = getCoordinate(canvas, e);
     const lastShape = shapes[shapes.length - 1];
+
+    if (config.isDrawingPolygon && config.type == 'POLYGON' && lastShape instanceof Polygon) {
+      const polygon = lastShape as Polygon;
+      polygon.updateEndCoordinate(coordinate)
+    }
+
+    if (!config.isMouseDown) return;
+
     if (config.type == 'LINE' && lastShape instanceof Line) {
       const line = lastShape as Line;
       line.updateEndCoordinate(coordinate);
@@ -115,4 +131,24 @@ const onDocumentReady = () => {
   canvas.onmouseup = () => {
     config.isMouseDown = false;
   };
+
+  canvas.onclick = (e: MouseEvent) => {
+    if (config.type == 'POLYGON' && config.isDrawingPolygon) {
+      const coordinate = getCoordinate(canvas, e);
+      const lastShape = shapes[shapes.length - 1];
+
+      const polygon = lastShape as Polygon
+      polygon.addCoordinate(coordinate)
+    }
+  }
+
+  canvas.ondblclick = (e: MouseEvent) => {
+    if (config.type == 'POLYGON' && config.isDrawingPolygon) {
+      const lastShape = shapes[shapes.length - 1];
+      const polygon = lastShape as Polygon
+
+      polygon.finishDrawing()
+      config.isDrawingPolygon = false
+    }
+  }
 };

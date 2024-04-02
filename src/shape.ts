@@ -331,6 +331,7 @@ export class Square extends Shape {
 
 export class Polygon extends Shape {
   public static count = 0;
+  private isDrawing: boolean;
   /**
    * Constructs a polygon
    *
@@ -348,6 +349,7 @@ export class Polygon extends Shape {
     for (let i = 0; i < 2; i++) {
       this.coordinates.push(startCoordinate);
     }
+    this.isDrawing = true
   }
 
   /**
@@ -356,71 +358,52 @@ export class Polygon extends Shape {
    * @param endCoordinate
    */
   updateEndCoordinate(endCoordinate: number[]) {
-    const startCoordinate = this.coordinates[0];
-
-    const width = Math.min(
-        Math.abs(startCoordinate[0] - endCoordinate[0]),
-        Math.abs(startCoordinate[1] - endCoordinate[1])
-    );
-
-    if (endCoordinate[0] < startCoordinate[0]) {
-      endCoordinate[0] = startCoordinate[0] - width;
-    } else {
-      endCoordinate[0] = startCoordinate[0] + width;
-    }
-
-    if (endCoordinate[1] < startCoordinate[1]) {
-      endCoordinate[1] = startCoordinate[1] - width;
-    } else {
-      endCoordinate[1] = startCoordinate[1] + width;
-    }
-
     this.coordinates[this.coordinates.length - 1] = endCoordinate;
   }
 
+  addCoordinate(newCoordinate: number[]) {
+    this.coordinates.push(newCoordinate)
+  }
+
+  finishDrawing() {
+    this.coordinates.pop()
+    this.isDrawing = false
+  }
+
   render(webglUtils: WebglUtils) {
-    if (this.coordinates.length !== 2) {
+    // If there are no coordinates, return
+    if (this.coordinates.length === 0) {
       return;
     }
 
-    // color for every point
+    // Set the color for every point
+    const colors = new Array(this.coordinates.length).fill(this.colors[0]);
     webglUtils.renderColor(
-        new Float32Array(
-            flattenMatrix([
-              this.colors[0],
-              this.colors[0],
-              this.colors[0],
-              this.colors[0],
-              this.colors[0],
-              this.colors[0]
-            ])
-        ),
+        new Float32Array(flattenMatrix(colors)),
         4
     );
 
-    const x1 = this.coordinates[0][0];
-    const y1 = this.coordinates[0][1];
-    const x2 = this.coordinates[1][0];
-    const y2 = this.coordinates[1][1];
-
-    // draw two triangle
-    const coordinates = new Float32Array([
-      x1,
-      y1,
-      x2,
-      y1,
-      x1,
-      y2,
-      x1,
-      y2,
-      x2,
-      y1,
-      x2,
-      y2
-    ]);
-
-    webglUtils.renderVertex(coordinates, 2);
-    webglUtils.gl.drawArrays(webglUtils.gl.TRIANGLES, 0, 6);
+    // If the polygon is still being drawn
+    if (this.isDrawing) {
+      // Draw a line between all coordinates
+      for (let i = 0; i < this.coordinates.length - 1 ; i++) {
+        const coordinates = new Float32Array([
+          this.coordinates[i][0],
+          this.coordinates[i][1],
+          this.coordinates[i + 1][0],
+          this.coordinates[i + 1][1]
+        ]);
+        webglUtils.renderVertex(coordinates, 2);
+        webglUtils.gl.drawArrays(webglUtils.gl.LINES, 0, 2);
+      }
+    } else {
+      // If the polygon is finished being drawn, draw the polygon
+      const coordinates = new Float32Array(
+          this.coordinates.flat()
+      );
+      webglUtils.renderVertex(coordinates, 2);
+      webglUtils.gl.drawArrays(webglUtils.gl.TRIANGLE_FAN, 0, this.coordinates.length);
+    }
   }
 
   rotate(degree: number): void {}
