@@ -1,7 +1,7 @@
 import { Shape } from '../shape.ts';
 import { rgbToHex } from '../utils';
 import { Config } from '../utils/interfaces.ts';
-import { deactiveAllShapeBtns } from './shape-btn.ts';
+import { deactivateAllShapeBtns } from './shape-btn.ts';
 export const handleOnShapeAdded = (
   shape: Shape,
   color: string,
@@ -29,7 +29,7 @@ export const handleOnShapeAdded = (
       this.classList.add('bg-input-active');
       this.classList.remove('bg-input');
       shape.setIsActive(true);
-      deactiveAllShapeBtns(config);
+      deactivateAllShapeBtns(config);
     }
   });
 
