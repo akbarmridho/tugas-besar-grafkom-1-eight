@@ -13,7 +13,6 @@ export class WebglUtils {
   /**
    * Creates and compiles a shader.
    *
-   * @param {!WebGLRenderingContext} gl The WebGL Context.
    * @param {string} shaderSource The GLSL source code for the shader.
    * @param {number} shaderType The type of shader, VERTEX_SHADER or
    *     FRAGMENT_SHADER.
@@ -34,7 +33,7 @@ export class WebglUtils {
     this.gl.compileShader(shader);
 
     // Check if it compiled
-    var success = this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS);
+    const success = this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS);
     if (!success) {
       // Something went wrong during compilation; get the error
       throw 'could not compile shader:' + this.gl.getShaderInfoLog(shader);
@@ -46,7 +45,6 @@ export class WebglUtils {
   /**
    * Creates a program from 2 shaders.
    *
-   * @param {!WebGLRenderingContext} gl The WebGL context.
    * @param {!WebGLShader} vertexShader A vertex shader.
    * @param {!WebGLShader} fragmentShader A fragment shader.
    * @return {!WebGLProgram} A program.
@@ -73,7 +71,7 @@ export class WebglUtils {
     this.gl.useProgram(this.program);
 
     // Check if it linked.
-    var success = this.gl.getProgramParameter(
+    const success = this.gl.getProgramParameter(
       this.program,
       this.gl.LINK_STATUS
     );

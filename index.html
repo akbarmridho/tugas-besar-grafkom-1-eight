@@ -9,25 +9,25 @@
 </head>
 
 <body class="bg-primary">
-  <div class="flex flex-col bg-tertiary h-screen">
-    <h1 class="flex-none bg-primary text-md font-medium text-primary-fg text-center py-2 mb-1 shadow-xl">Eight's WebGL 2D Primitive Elements</h1>
-    <div class="flex flex-row h-full p-1 justify-between items-center">
-      <div class="flex flex-col h-full bg-primary w-fit p-1 rounded-md gap-1.5 py-4 px-1 shadow-xl" id="shape-btn-container">
-        <button class="shape-btn hover:bg-secondary hover:bg-opacity-50 rounded-sm p-1" id="line-btn">
-          <i data-lucide="slash" class="size-5 text-primary-fg" ></i>
-        </button>
-        <button class="shape-btn hover:bg-secondary hover:bg-opacity-50 rounded-sm p-1" id="square-btn">
-          <i data-lucide="square" class="size-5 text-primary-fg" ></i>
-        </button>
-        <button class="shape-btn hover:bg-secondary hover:bg-opacity-50 rounded-sm p-1" id="rectangle-btn">
-          <i data-lucide="rectangle-horizontal" class="size-5 text-primary-fg" ></i>
-        </button>
-        <button class="shape-btn hover:bg-secondary hover:bg-opacity-50 rounded-sm p-1" id="polygon-btn">
-          <i data-lucide="pentagon" class="size-5 text-primary-fg" ></i>
-        </button>
+  <h1 class="bg-primary text-md font-medium text-primary-fg text-center py-2 mb-1 shadow-xl">Eight's WebGL 2D Primitive Elements</h1>
+  <div class="flex flex-col bg-tertiary">
+    <div class="flex flex-row p-1 justify-between items-center">
+      <div class="self-start flex flex-col gap-1.5 bg-primary p-1 rounded-md py-4 px-1 shadow-xl" id="shape-btn-container">
+          <button class="shape-btn hover:bg-secondary hover:bg-opacity-50 rounded-sm p-1" id="line-btn">
+            <i data-lucide="slash" class="size-5 text-primary-fg" ></i>
+          </button>
+          <button class="shape-btn hover:bg-secondary hover:bg-opacity-50 rounded-sm p-1" id="square-btn">
+            <i data-lucide="square" class="size-5 text-primary-fg" ></i>
+          </button>
+          <button class="shape-btn hover:bg-secondary hover:bg-opacity-50 rounded-sm p-1" id="rectangle-btn">
+            <i data-lucide="rectangle-horizontal" class="size-5 text-primary-fg" ></i>
+          </button>
+          <button class="shape-btn hover:bg-secondary hover:bg-opacity-50 rounded-sm p-1" id="polygon-btn">
+            <i data-lucide="pentagon" class="size-5 text-primary-fg" ></i>
+          </button>
       </div>
-      <div class="w-[80vw] h-full flex items-center justify-center rounded-md">
-        <canvas class="bg-white" id="canvas" width="800" height="800">
+      <div>
+        <canvas class="bg-white h-[800px] w-[800px]" id="canvas" width="800" height="800">
 
         </canvas>
       </div>
