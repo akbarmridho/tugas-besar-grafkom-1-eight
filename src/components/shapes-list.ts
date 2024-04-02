@@ -1,7 +1,7 @@
 import { Shape } from '../shape.ts';
 import { rgbToHex } from '../utils';
 import { Config } from '../utils/interfaces.ts';
-import { deactiveAllShapeBtns } from './shape-btn.ts';
+import { deactivateAllShapeBtns } from './shape-btn.ts';
 export const handleOnShapeAdded = (
   shape: Shape,
   color: string,
@@ -29,7 +29,7 @@ export const handleOnShapeAdded = (
       this.classList.add('bg-input-active');
       this.classList.remove('bg-input');
       shape.setIsActive(true);
-      deactiveAllShapeBtns(config);
+      deactivateAllShapeBtns(config);
     }
   });
 
@@ -37,19 +37,19 @@ export const handleOnShapeAdded = (
 
   if (shape.getIcon() === 'slash') {
     iconElement.innerHTML = `
-    <svg color="${color}" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-slash" id="svg-${shape.getId()}">
+    <svg color="${color}" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="${color}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-slash" id="svg-${shape.getId()}">
         <path d="M22 2 2 22"/>
     </svg>
     `;
   } else if (shape.getIcon() === 'square') {
     iconElement.innerHTML = `
-    <svg color="${color}" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-square"><rect width="18" height="18" x="3" y="3" rx="2" id="svg-${shape.getId()}"/></svg>`;
+    <svg color="${color}" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="${color}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-square"><rect width="18" height="18" x="3" y="3" rx="2" id="svg-${shape.getId()}"/></svg>`;
   } else if (shape.getIcon() === 'rectangle-horizontal') {
     iconElement.innerHTML = `
-    <svg color="${color}" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rectangle-horizontal"><rect width="20" height="12" x="2" y="6" rx="2"/></svg>`;
+    <svg color="${color}" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="${color}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rectangle-horizontal"><rect width="20" height="12" x="2" y="6" rx="2"/></svg>`;
   } else if (shape.getIcon() === 'pentagon') {
     iconElement.innerHTML = `
-    <svg color="${color}" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pentagon"><path d="M3.5 8.7c-.7.5-1 1.4-.7 2.2l2.8 8.7c.3.8 1 1.4 1.9 1.4h9.1c.9 0 1.6-.6 1.9-1.4l2.8-8.7c.3-.8 0-1.7-.7-2.2l-7.4-5.3a2.1 2.1 0 0 0-2.4 0Z"/></svg>
+    <svg color="${color}" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="${color}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pentagon"><path d="M3.5 8.7c-.7.5-1 1.4-.7 2.2l2.8 8.7c.3.8 1 1.4 1.9 1.4h9.1c.9 0 1.6-.6 1.9-1.4l2.8-8.7c.3-.8 0-1.7-.7-2.2l-7.4-5.3a2.1 2.1 0 0 0-2.4 0Z"/></svg>
     `;
   }
 
@@ -78,5 +78,6 @@ export const changeShapeSvgColor = (shape: Shape) => {
     const color = shape.getColor()[0];
     const rgb = { r: color[0] * 255, g: color[1] * 255, b: color[2] * 255 };
     svgElement.setAttribute('color', rgbToHex(rgb));
+    svgElement.setAttribute('fill', rgbToHex(rgb));
   }
 };

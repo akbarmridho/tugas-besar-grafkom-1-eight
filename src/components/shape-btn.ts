@@ -9,9 +9,11 @@ export const onShapeButtonClick = (
   btn.onclick = (e: MouseEvent) => {
     e.preventDefault();
     const isActive = btn.classList.contains('bg-input-active');
-    deactiveAllShapeBtns(config);
-    config.type = typeName;
-    if (!isActive) btn.classList.add('bg-input-active');
+    deactivateAllShapeBtns(config);
+    if (!isActive) {
+      config.type = typeName;
+      btn.classList.add('bg-input-active');
+    }
   };
 };
 
@@ -20,11 +22,11 @@ export const setupCursorButtonClick = (config: Config) => {
   if (!btn) return;
   btn.onclick = (e: MouseEvent) => {
     e.preventDefault();
-    deactiveAllShapeBtns(config);
+    deactivateAllShapeBtns(config);
   };
 };
 
-export const deactiveAllShapeBtns = (config: Config) => {
+export const deactivateAllShapeBtns = (config: Config) => {
   const shapeBtnContainer = document.getElementById('shape-btn-container');
   if (!shapeBtnContainer) return;
   shapeBtnContainer

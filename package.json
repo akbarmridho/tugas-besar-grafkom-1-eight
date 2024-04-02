@@ -10,6 +10,7 @@
   },
   "devDependencies": {
     "@tweakpane/core": "^2.0.3",
+    "@types/wicg-file-system-access": "^2023.10.5",
     "autoprefixer": "^10.4.19",
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.3",
@@ -17,8 +18,10 @@
     "vite": "^5.2.0"
   },
   "dependencies": {
+    "class-transformer": "^0.5.1",
     "lucide": "^0.363.0",
     "prettier": "^3.2.5",
+    "reflect-metadata": "^0.2.2",
     "tweakpane": "^4.0.3",
     "vite-plugin-glsl": "^1.2.1"
   }

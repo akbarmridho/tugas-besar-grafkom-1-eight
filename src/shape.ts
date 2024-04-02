@@ -92,6 +92,11 @@ export abstract class Shape {
   setIsActive(isActive: boolean) {
     this.isActive = isActive;
   }
+
+  getFlattenedColor() {
+    return new Float32Array(flattenMatrix(this.colors));
+  }
+
   abstract render(webglUtils: WebglUtils): void;
   abstract translate(x: number, y: number): void;
   abstract scale(x: number, y: number): void;
@@ -129,7 +134,7 @@ export class Line extends Shape {
   }
 
   render(webglUtils: WebglUtils) {
-    webglUtils.renderColor(new Float32Array(flattenMatrix(this.colors)), 4);
+    webglUtils.renderColor(this.getFlattenedColor(), 4);
     webglUtils.renderVertex(
       new Float32Array(flattenMatrix(this.coordinates)),
       2
@@ -161,7 +166,9 @@ export class Rectangle extends Shape {
     Rectangle.count += 1;
     this.id = 'rectangle-' + Rectangle.count;
     this.name = 'Rectangle ' + Rectangle.count;
-    this.colors.push(color);
+    for (let i = 0; i < 6; i++) {
+      this.colors.push(color);
+    }
     for (let i = 0; i < 2; i++) {
       this.coordinates.push(startCoordinate);
     }
@@ -182,19 +189,7 @@ export class Rectangle extends Shape {
     }
 
     // color for every point
-    webglUtils.renderColor(
-      new Float32Array(
-        flattenMatrix([
-          this.colors[0],
-          this.colors[0],
-          this.colors[0],
-          this.colors[0],
-          this.colors[0],
-          this.colors[0]
-        ])
-      ),
-      4
-    );
+    webglUtils.renderColor(this.getFlattenedColor(), 4);
 
     const x1 = this.coordinates[0][0];
     const y1 = this.coordinates[0][1];
@@ -242,8 +237,10 @@ export class Square extends Shape {
     this.type = 'SQUARE';
     Square.count += 1;
     this.id = 'square-' + Square.count;
-    this.name = 'square ' + Square.count;
-    this.colors.push(color);
+    this.name = 'Square ' + Square.count;
+    for (let i = 0; i < 6; i++) {
+      this.colors.push(color);
+    }
     for (let i = 0; i < 2; i++) {
       this.coordinates.push(startCoordinate);
     }
@@ -283,19 +280,7 @@ export class Square extends Shape {
     }
 
     // color for every point
-    webglUtils.renderColor(
-      new Float32Array(
-        flattenMatrix([
-          this.colors[0],
-          this.colors[0],
-          this.colors[0],
-          this.colors[0],
-          this.colors[0],
-          this.colors[0]
-        ])
-      ),
-      4
-    );
+    webglUtils.renderColor(this.getFlattenedColor(), 4);
 
     const x1 = this.coordinates[0][0];
     const y1 = this.coordinates[0][1];
@@ -377,11 +362,7 @@ export class Polygon extends Shape {
     }
 
     // Set the color for every point
-    const colors = new Array(this.coordinates.length).fill(this.colors[0]);
-    webglUtils.renderColor(
-        new Float32Array(flattenMatrix(colors)),
-        4
-    );
+    webglUtils.renderColor(this.getFlattenedColor(), 4);
 
     // If the polygon is still being drawn
     if (this.isDrawing) {

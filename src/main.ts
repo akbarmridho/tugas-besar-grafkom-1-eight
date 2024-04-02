@@ -4,7 +4,12 @@ import { initializeIcons } from './utils/lucide-icons.ts';
 import { Tweakpane } from './utils/tweakpane.ts';
 import { WebglUtils } from './utils/webgl-utils.ts';
 import { Line, Rectangle, Shape, Square, Polygon } from './shape.ts';
-import { getCoordinate, normalizeRgbColor, rgbToHex } from './utils';
+import {
+  arrayToRgbAndDenormalize,
+  getCoordinate,
+  normalizeRgbColor,
+  rgbToHex
+} from './utils';
 import { handleOnShapeAdded } from './components/shapes-list.ts';
 import { Config } from './utils/interfaces.ts';
 import {
@@ -15,6 +20,7 @@ import {
 import vertexShaderSource from './glsl/vertex.glsl';
 // @ts-ignore
 import fragmentShaderSource from './fragment/fragment.frag';
+import { deserializeData, serializeData } from './utils/serializer.ts';
 
 document.addEventListener('DOMContentLoaded', function () {
   onDocumentReady();
@@ -131,6 +137,70 @@ const onDocumentReady = () => {
   canvas.onmouseup = () => {
     config.isMouseDown = false;
   };
+
+  // save load behavior
+  tweakpane.registerSaveHandler(() => {
+    showSaveFilePicker({
+      types: [
+        {
+          description: 'Saved model data',
+          accept: {
+            'application/json': ['.json']
+          }
+        }
+      ]
+    })
+      .then((handle) => {
+        handle.createWritable().then((writeable) => {
+          writeable.write(serializeData(shapes)).then(() => {
+            void writeable.close();
+          });
+        });
+      })
+      .catch((e) => {
+        // ignore
+      });
+  });
+
+  tweakpane.registerLoadHandler(() => {
+    showOpenFilePicker({
+      multiple: false,
+      types: [
+        {
+          description: 'Saved model data',
+          accept: {
+            'application/json': ['.json']
+          }
+        }
+      ]
+    })
+      .then((handlers) => {
+        const handle = handlers[0];
+
+        handle.getFile().then((file) => {
+          file.text().then((rawResult) => {
+            const loadedShapes = deserializeData(rawResult);
+
+            // clear old shapes
+            shapes.splice(0, shapes.length);
+
+            // load
+            for (const shape of loadedShapes) {
+              shapes.push(shape);
+              handleOnShapeAdded(
+                shape,
+                rgbToHex(arrayToRgbAndDenormalize(shape.getColor()[0])),
+                shapes,
+                config
+              );
+            }
+          });
+        });
+      })
+      .catch((e) => {
+        // ignore
+      });
+  });
 
   canvas.onclick = (e: MouseEvent) => {
     if (config.type == 'POLYGON' && config.isDrawingPolygon) {
