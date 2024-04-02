@@ -1,7 +1,7 @@
 import './style.css';
 import { initializeIcons } from './utils/lucide-icons.ts';
 
-import { Tweakpane } from './utils/tweakpane.ts';
+import { Tweakpane } from './components/tweakpane.ts';
 import { WebglUtils } from './utils/webgl-utils.ts';
 import { Line, Rectangle, Shape, Square, Polygon } from './shape.ts';
 import {

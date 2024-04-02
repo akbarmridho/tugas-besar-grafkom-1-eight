@@ -1,8 +1,8 @@
 import { BladeApi, ButtonApi, Pane } from 'tweakpane';
 import { BindingApi } from '@tweakpane/core';
 import { Shape } from '../shape.ts';
-import { normalizeRgbColor, RGB } from './index.ts';
-import { changeShapeSvgColor } from '../components/shapes-list.ts';
+import { normalizeRgbColor, RGB } from '../utils';
+import { changeShapeSvgColor } from './shapes-list.ts';
 
 const COLOR_PARAMS = {
   color: { r: 255, g: 0, b: 55 }
