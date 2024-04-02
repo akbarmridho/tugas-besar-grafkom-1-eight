@@ -362,7 +362,11 @@ export class Polygon extends Shape {
     }
 
     // Set the color for every point
-    webglUtils.renderColor(this.getFlattenedColor(), 4);
+    const colors = new Array(this.coordinates.length).fill(this.colors[0]);
+    webglUtils.renderColor(
+        new Float32Array(flattenMatrix(colors)),
+        4
+    );
 
     // If the polygon is still being drawn
     if (this.isDrawing) {
