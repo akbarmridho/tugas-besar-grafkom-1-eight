@@ -69,6 +69,14 @@ export class Tweakpane {
     this.saveButton = this.pane.addButton(SAVE_BUTTON_PARAMS);
   }
 
+  registerSaveHandler(fn: () => void) {
+    this.saveButton.on('click', fn);
+  }
+
+  registerLoadHandler(fn: () => void) {
+    this.loadButton.on('click', fn);
+  }
+
   changeColor = (color: RGB) => {
     this.selectedColor = color;
     this.changeShapeProperties((shape) => {

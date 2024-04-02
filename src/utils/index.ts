@@ -29,3 +29,11 @@ export function rgbToHex({ r, g, b }: RGB) {
       .slice(1)
   );
 }
+
+export function arrayToRgbAndDenormalize(values: number[]): RGB {
+  return {
+    r: values[0] * 255,
+    g: values[1] * 255,
+    b: values[2] * 255
+  };
+}
