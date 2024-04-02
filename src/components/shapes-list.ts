@@ -1,6 +1,6 @@
 import { Shape } from '../shape.ts';
 import { rgbToHex } from '../utils';
-import { Config } from '../utils/interfaces';
+import { Config } from '../utils/interfaces.ts';
 import { deactiveAllShapeBtns } from './shape-btn.ts';
 export const handleOnShapeAdded = (
   shape: Shape,

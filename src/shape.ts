@@ -138,4 +138,10 @@ export class Line extends Shape {
       webglUtils.gl.drawArrays(webglUtils.gl.LINES, i, 2);
     }
   }
+
+  rotate(degree: number): void {}
+
+  scale(x: number, y: number): void {}
+
+  translate(x: number, y: number): void {}
 }
