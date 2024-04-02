@@ -3,7 +3,8 @@ import {
   Square,
   RectangleHorizontal,
   Slash,
-  Pentagon
+  Pentagon,
+  MousePointer
 } from 'lucide';
 
 export const initializeIcons = () => {
@@ -12,7 +13,8 @@ export const initializeIcons = () => {
       Square,
       RectangleHorizontal,
       Slash,
-      Pentagon
+      Pentagon,
+      MousePointer
     }
   });
 };

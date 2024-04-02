@@ -15,6 +15,15 @@ export const onShapeButtonClick = (
   };
 };
 
+export const setupCursorButtonClick = (config: Config) => {
+  const btn = document.getElementById('cursor-btn');
+  if (!btn) return;
+  btn.onclick = (e: MouseEvent) => {
+    e.preventDefault();
+    deactiveAllShapeBtns(config);
+  };
+};
+
 export const deactiveAllShapeBtns = (config: Config) => {
   const shapeBtnContainer = document.getElementById('shape-btn-container');
   if (!shapeBtnContainer) return;

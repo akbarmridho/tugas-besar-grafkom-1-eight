@@ -7,7 +7,10 @@ import { Line, Rectangle, Shape, Square } from './shape.ts';
 import { getCoordinate, normalizeRgbColor, rgbToHex } from './utils';
 import { handleOnShapeAdded } from './components/shapes-list.ts';
 import { Config } from './utils/interfaces.ts';
-import { onShapeButtonClick } from './components/shape-btn.ts';
+import {
+  onShapeButtonClick,
+  setupCursorButtonClick
+} from './components/shape-btn.ts';
 // @ts-ignore
 import vertexShaderSource from './glsl/vertex.glsl';
 // @ts-ignore
@@ -56,6 +59,7 @@ const onDocumentReady = () => {
 
   render();
 
+  setupCursorButtonClick(config);
   onShapeButtonClick('line-btn', 'LINE', config);
   onShapeButtonClick('square-btn', 'SQUARE', config);
   onShapeButtonClick('rectangle-btn', 'RECTANGLE', config);
