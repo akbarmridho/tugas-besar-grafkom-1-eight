@@ -8,10 +8,10 @@
   <title>WebGL Part 1: 2D Primitive Elements</title>
 </head>
 
-<body class="bg-primary">
+<body class="flex flex-col bg-primary h-screen">
   <h1 class="bg-primary text-md font-medium text-primary-fg text-center py-2 mb-1 shadow-xl">Eight's WebGL 2D Primitive Elements</h1>
-  <div class="flex flex-col bg-tertiary">
-    <div class="flex flex-row p-1 justify-between items-center">
+  <div class="flex flex-col bg-tertiary grow">
+    <div class="flex flex-row p-1 justify-between items-center h-full">
       <div class="self-start flex flex-col gap-1.5 bg-primary p-1 rounded-md py-4 px-1 shadow-xl" id="shape-btn-container">
           <button class="shape-btn hover:bg-secondary hover:bg-opacity-50 rounded-sm p-1" id="cursor-btn">
             <i data-lucide="mouse-pointer" class="size-5 text-primary-fg" ></i>
@@ -29,7 +29,7 @@
             <i data-lucide="pentagon" class="size-5 text-primary-fg" ></i>
           </button>
       </div>
-      <div>
+      <div class="flex items-center h-full">
         <canvas class="bg-white h-[800px] w-[800px]" id="canvas" width="800" height="800">
 
         </canvas>
