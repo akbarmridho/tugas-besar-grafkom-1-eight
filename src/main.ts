@@ -221,4 +221,13 @@ const onDocumentReady = () => {
       config.isDrawingPolygon = false
     }
   }
+
+  window.addEventListener("keydown", (e: KeyboardEvent) => {
+    if (e.key === 'Backspace' && config.type == 'POLYGON' && config.isDrawingPolygon ) {
+      const lastShape = shapes[shapes.length - 1];
+      const polygon = lastShape as Polygon
+
+      polygon.removeLastCoordinate()
+    }
+  });
 };

@@ -351,8 +351,14 @@ export class Polygon extends Shape {
   }
 
   finishDrawing() {
-    this.coordinates.pop()
+    this.removeLastCoordinate()
     this.isDrawing = false
+  }
+
+  removeLastCoordinate() {
+    if (this.coordinates.length > 2) {
+      this.coordinates.pop()
+    }
   }
 
   render(webglUtils: WebglUtils) {
