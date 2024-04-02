@@ -3,7 +3,7 @@ import { initializeIcons } from './utils/lucide-icons.ts';
 
 import { Tweakpane } from './utils/tweakpane.ts';
 import { WebglUtils } from './utils/webgl-utils.ts';
-import { Line, Rectangle, Shape } from './shape.ts';
+import { Line, Rectangle, Shape, Square } from './shape.ts';
 import { getCoordinate, normalizeRgbColor, rgbToHex } from './utils';
 import { handleOnShapeAdded } from './components/shapes-list.ts';
 import { Config } from './utils/interfaces.ts';
@@ -81,6 +81,11 @@ const onDocumentReady = () => {
           ))
         );
         break;
+      case 'SQUARE':
+        shapes.push(
+          (newShape = new Square(coordinate, normalizeRgbColor(selectedColor)))
+        );
+        break;
     }
     if (!!newShape) {
       handleOnShapeAdded(newShape, rgbToHex(selectedColor), shapes, config);
@@ -97,6 +102,9 @@ const onDocumentReady = () => {
     } else if (config.type == 'RECTANGLE' && lastShape instanceof Rectangle) {
       const rectangle = lastShape as Rectangle;
       rectangle.updateEndCoordinate(coordinate);
+    } else if (config.type == 'SQUARE' && lastShape instanceof Square) {
+      const square = lastShape as Square;
+      square.updateEndCoordinate(coordinate);
     }
   };
 
