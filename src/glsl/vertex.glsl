@@ -7,7 +7,7 @@ uniform vec2 u_resolution;
 
 void main() {
     fragColor = vertColor;
-    gl_PointSize = 10.0;
+    gl_PointSize = 5.0;
 
     vec2 zeroToOne = a_position / u_resolution;
 

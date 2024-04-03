@@ -60,6 +60,7 @@ const onDocumentReady = () => {
     webglUtils.clear();
     shapes.forEach((shape) => {
       shape.render(webglUtils);
+      shape.renderOutline(webglUtils);
     });
     window.requestAnimationFrame(render);
   };
@@ -157,6 +158,10 @@ const onDocumentReady = () => {
 
   canvas.onmouseup = () => {
     config.isMouseDown = false;
+  };
+
+  canvas.onclick = (e) => {
+    //
   };
 
   // save load behavior
