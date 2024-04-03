@@ -1,6 +1,7 @@
 import { WebglUtils } from './utils/webgl-utils.ts';
 import { flattenMatrix } from './utils/vector.ts';
 import { shapeType } from './utils/interfaces.ts';
+import { computeConvexHull } from './utils/geometry.ts';
 
 export abstract class Shape {
   protected coordinates: number[][];
@@ -472,13 +473,18 @@ export class Polygon extends Shape {
         webglUtils.gl.drawArrays(webglUtils.gl.LINES, 0, 2);
       }
     } else {
-      // If the polygon is finished being drawn, draw the polygon
-      const coordinates = new Float32Array(this.coordinates.flat());
+      // Compute the convex hull of the coordinates
+      const hullCoordinates = computeConvexHull(this.coordinates);
+
+      // Convert the coordinates to a flat array for rendering
+      const coordinates = new Float32Array(hullCoordinates.flat());
+
+      // Render the convex hull
       webglUtils.renderVertex(coordinates, 2);
       webglUtils.gl.drawArrays(
         webglUtils.gl.TRIANGLE_FAN,
         0,
-        this.coordinates.length
+        hullCoordinates.length
       );
     }
   }
