@@ -261,4 +261,18 @@ const onDocumentReady = () => {
       polygon.removeLastCoordinate();
     }
   });
+
+  canvas.oncontextmenu = (e: MouseEvent) => {
+    const activePolygon = shapes.find(
+      (shape) => shape.getType() === 'POLYGON' && shape.getIsActive()
+    ) as Polygon;
+
+    if (activePolygon) {
+      e.preventDefault();
+
+      const coordinate = getCoordinate(canvas, e);
+
+      activePolygon.appendCoordinate(coordinate);
+    }
+  };
 };

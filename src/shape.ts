@@ -434,6 +434,10 @@ export class Polygon extends Shape {
 
   addCoordinate(newCoordinate: number[]) {
     this.coordinates[this.coordinates.length - 1] = newCoordinate;
+    this.appendCoordinate(newCoordinate);
+  }
+
+  appendCoordinate(newCoordinate: number[]) {
     this.coordinates.push(newCoordinate);
   }
 
