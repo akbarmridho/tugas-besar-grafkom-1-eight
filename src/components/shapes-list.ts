@@ -35,8 +35,8 @@ export const handleOnShapeAdded = (
 
       const centroid = shape.getCentroid();
       tweakpane.translateParams.translate = {
-        x: centroid[0],
-        y: centroid[1]
+        x: centroid[0] - 400,
+        y: centroid[1] - 400
       };
       tweakpane.translateBinding.refresh();
     }

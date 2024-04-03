@@ -8,7 +8,6 @@ export abstract class Shape {
   protected translation: number[];
   protected scaleVector: number[];
   protected rotation: number;
-  protected centroid: number[];
   protected isActive: boolean;
   protected type: shapeType;
   protected id: string = '';
@@ -26,7 +25,6 @@ export abstract class Shape {
     translation?: number[],
     scaleVector?: number[],
     rotation?: number,
-    centroid?: number[],
     isActive?: boolean
   ) {
     this.coordinates = coordinates || [];
@@ -34,7 +32,6 @@ export abstract class Shape {
     this.translation = translation || [0, 0];
     this.scaleVector = scaleVector || [0, 0];
     this.rotation = rotation || 0;
-    this.centroid = centroid || [0, 0];
     this.isActive = isActive || false;
     this.type = '';
   }
@@ -75,9 +72,7 @@ export abstract class Shape {
     const centroidX = sumX / this.coordinates.length;
     const centroidY = sumY / this.coordinates.length;
 
-    this.centroid = [centroidX, centroidY];
-
-    return this.centroid;
+    return [centroidX, centroidY];
   }
 
   getName() {
@@ -111,18 +106,17 @@ export abstract class Shape {
   }
 
   translate(newCentroidX: number, newCentroidY: number) {
+    const centroid = this.getCentroid();
+
     // Calculate the translation values
-    const translateX = newCentroidX - this.centroid[0];
-    const translateY = newCentroidY - this.centroid[1];
+    const translateX = newCentroidX + 400 - centroid[0];
+    const translateY = newCentroidY + 400 - centroid[1];
 
     // Translate all points
     for (let i = 0; i < this.coordinates.length; i++) {
       this.coordinates[i][0] += translateX;
       this.coordinates[i][1] += translateY;
     }
-
-    // Update the centroid
-    this.centroid = [newCentroidX, newCentroidY];
   }
 
   abstract render(webglUtils: WebglUtils): void;

@@ -53,8 +53,8 @@ export class Tweakpane {
       .addBinding(this.translateParams, 'translate', {
         picker: 'inline',
         expanded: true,
-        x: { min: -1, max: 1, step: 0.01 },
-        y: { inverted: true, min: -1, max: 1, step: 0.01 }
+        x: { min: -400, max: 400, step: 0.01 },
+        y: { min: -400, max: 400, step: 0.01 }
       })
       .on('change', (ev) => {
         // @ts-ignore
