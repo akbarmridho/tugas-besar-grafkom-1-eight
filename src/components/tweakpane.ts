@@ -20,7 +20,7 @@ export class Tweakpane {
   pane: Pane;
   colorBinding: BindingApi;
   translateBinding: BindingApi;
-  scaleBlade: BladeApi;
+  scaleBinding: BindingApi;
   loadButton: ButtonApi;
   saveButton: ButtonApi;
   shapes: Shape[];
@@ -29,6 +29,7 @@ export class Tweakpane {
   translateParams = {
     translate: { x: 0, y: 0 }
   };
+  scaleFactor = 1;
 
   constructor(shapes: Shape[]) {
     this.shapes = shapes;
@@ -61,13 +62,19 @@ export class Tweakpane {
         this.translate(ev.value.x, ev.value.y);
       });
 
-    this.scaleBlade = this.pane.addBlade({
-      view: 'slider',
-      label: 'scale',
-      min: 0.1,
-      max: 10,
-      value: 0.1
-    });
+    this.scaleBinding = this.pane
+      .addBinding(this, 'scaleFactor', {
+        view: 'slider',
+        label: 'scale',
+        min: 0.1,
+        max: 3,
+        value: 0.1
+      })
+      .on('change', (ev) => {
+        // @ts-ignore
+        this.scale(ev.value);
+      });
+
     this.loadButton = this.pane.addButton(LOAD_BUTTON_PARAMS);
     this.saveButton = this.pane.addButton(SAVE_BUTTON_PARAMS);
   }
@@ -91,6 +98,12 @@ export class Tweakpane {
   translate = (x: number, y: number) => {
     this.changeShapeProperties((shape) => {
       shape.translate(x, y);
+    });
+  };
+
+  scale = (newScale: number) => {
+    this.changeShapeProperties((shape) => {
+      shape.scale(newScale);
     });
   };
 

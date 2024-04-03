@@ -6,7 +6,7 @@ export abstract class Shape {
   protected coordinates: number[][];
   protected colors: number[][];
   protected translation: number[];
-  protected scaleVector: number[];
+  protected scaleFactor: number;
   protected rotation: number;
   protected isActive: boolean;
   protected type: shapeType;
@@ -30,7 +30,7 @@ export abstract class Shape {
     this.coordinates = coordinates || [];
     this.colors = colors || [];
     this.translation = translation || [0, 0];
-    this.scaleVector = scaleVector || [0, 0];
+    this.scaleFactor = 1;
     this.rotation = rotation || 0;
     this.isActive = isActive || false;
     this.type = '';
@@ -52,8 +52,8 @@ export abstract class Shape {
     return this.translation;
   }
 
-  getScaleVector() {
-    return this.scaleVector;
+  getScaleFactor() {
+    return this.scaleFactor;
   }
 
   getRotation() {
@@ -119,8 +119,35 @@ export abstract class Shape {
     }
   }
 
+  scale(newScale: number) {
+    // Calculate the relative scale factor
+    const relativeScale = newScale / this.scaleFactor;
+
+    const centroid = this.getCentroid();
+
+    // Translate the shape so that the centroid is at the origin
+    const translatedCoordinates = this.coordinates.map((coord) => [
+      coord[0] - centroid[0],
+      coord[1] - centroid[1]
+    ]);
+
+    // Scale the shape
+    const scaledCoordinates = translatedCoordinates.map((coord) => [
+      coord[0] * relativeScale,
+      coord[1] * relativeScale
+    ]);
+
+    // Translate the shape back to the original position
+    this.coordinates = scaledCoordinates.map((coord) => [
+      coord[0] + centroid[0],
+      coord[1] + centroid[1]
+    ]);
+
+    // Update the current scale factor
+    this.scaleFactor = newScale;
+  }
+
   abstract render(webglUtils: WebglUtils): void;
-  abstract scale(x: number, y: number): void;
   abstract rotate(degree: number): void;
 }
 
@@ -166,8 +193,6 @@ export class Line extends Shape {
   }
 
   rotate(degree: number): void {}
-
-  scale(x: number, y: number): void {}
 }
 
 export class Rectangle extends Shape {
@@ -248,8 +273,6 @@ export class Rectangle extends Shape {
   }
 
   rotate(degree: number): void {}
-
-  scale(x: number, y: number): void {}
 }
 
 export class Square extends Shape {
@@ -343,8 +366,6 @@ export class Square extends Shape {
   }
 
   rotate(degree: number): void {}
-
-  scale(x: number, y: number): void {}
 }
 
 export class Polygon extends Shape {
@@ -430,6 +451,4 @@ export class Polygon extends Shape {
   }
 
   rotate(degree: number): void {}
-
-  scale(x: number, y: number): void {}
 }

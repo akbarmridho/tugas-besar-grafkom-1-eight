@@ -3,6 +3,7 @@ import { rgbToHex } from '../utils';
 import { Config } from '../utils/interfaces.ts';
 import { deactivateAllShapeBtns } from './shape-btn.ts';
 import { Tweakpane } from './tweakpane.ts';
+
 export const handleOnShapeAdded = (
   shape: Shape,
   color: string,
@@ -39,6 +40,9 @@ export const handleOnShapeAdded = (
         y: centroid[1] - 400
       };
       tweakpane.translateBinding.refresh();
+
+      tweakpane.scaleFactor = shape.getScaleFactor();
+      tweakpane.scaleBinding.refresh();
     }
   });
 
