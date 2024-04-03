@@ -49,20 +49,17 @@ export class Tweakpane {
       );
     this.changeColor(COLOR_PARAMS.color);
 
-    this.translateBinding = this.pane.addBinding(
-      this.translateParams,
-      'translate',
-      {
+    this.translateBinding = this.pane
+      .addBinding(this.translateParams, 'translate', {
         picker: 'inline',
         expanded: true,
-        min: -1,
-        max: 1,
-        step: 0.01
-      }
-    ).on('change', (ev) => {
-      // @ts-ignore
-      this.translate(ev.value.x, ev.value.y);
-    });
+        x: { min: -1, max: 1, step: 0.01 },
+        y: { inverted: true, min: -1, max: 1, step: 0.01 }
+      })
+      .on('change', (ev) => {
+        // @ts-ignore
+        this.translate(ev.value.x, ev.value.y);
+      });
 
     this.scaleBlade = this.pane.addBlade({
       view: 'slider',
@@ -93,9 +90,9 @@ export class Tweakpane {
 
   translate = (x: number, y: number) => {
     this.changeShapeProperties((shape) => {
-      shape.translate(x, y)
+      shape.translate(x, y);
     });
-  }
+  };
 
   changeShapeProperties = (callback: (shape: Shape) => void) => {
     this.shapes.forEach((shape: Shape) => {
