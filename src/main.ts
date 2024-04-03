@@ -66,6 +66,14 @@ const onDocumentReady = () => {
 
   render();
 
+  // set uniform resolution
+  const resolutionUniformLocation = gl.getUniformLocation(
+    webglUtils.program,
+    'u_resolution'
+  );
+
+  gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
+
   setupCursorButtonClick(config);
   onShapeButtonClick('line-btn', 'LINE', config);
   onShapeButtonClick('square-btn', 'SQUARE', config);
@@ -100,14 +108,23 @@ const onDocumentReady = () => {
       case 'POLYGON':
         if (!config.isDrawingPolygon) {
           shapes.push(
-              (newShape = new Polygon(coordinate, normalizeRgbColor(selectedColor)))
-          )
-          config.isDrawingPolygon = true
+            (newShape = new Polygon(
+              coordinate,
+              normalizeRgbColor(selectedColor)
+            ))
+          );
+          config.isDrawingPolygon = true;
         }
         break;
     }
     if (!!newShape) {
-      handleOnShapeAdded(newShape, rgbToHex(selectedColor), shapes, config, tweakpane);
+      handleOnShapeAdded(
+        newShape,
+        rgbToHex(selectedColor),
+        shapes,
+        config,
+        tweakpane
+      );
     }
   };
 
@@ -115,9 +132,13 @@ const onDocumentReady = () => {
     const coordinate = getCoordinate(canvas, e);
     const lastShape = shapes[shapes.length - 1];
 
-    if (config.isDrawingPolygon && config.type == 'POLYGON' && lastShape instanceof Polygon) {
+    if (
+      config.isDrawingPolygon &&
+      config.type == 'POLYGON' &&
+      lastShape instanceof Polygon
+    ) {
       const polygon = lastShape as Polygon;
-      polygon.updateEndCoordinate(coordinate)
+      polygon.updateEndCoordinate(coordinate);
     }
 
     if (!config.isMouseDown) return;
@@ -208,27 +229,31 @@ const onDocumentReady = () => {
       const coordinate = getCoordinate(canvas, e);
       const lastShape = shapes[shapes.length - 1];
 
-      const polygon = lastShape as Polygon
-      polygon.addCoordinate(coordinate)
+      const polygon = lastShape as Polygon;
+      polygon.addCoordinate(coordinate);
     }
-  }
+  };
 
   canvas.ondblclick = (e: MouseEvent) => {
     if (config.type == 'POLYGON' && config.isDrawingPolygon) {
       const lastShape = shapes[shapes.length - 1];
-      const polygon = lastShape as Polygon
+      const polygon = lastShape as Polygon;
 
-      polygon.finishDrawing()
-      config.isDrawingPolygon = false
+      polygon.finishDrawing();
+      config.isDrawingPolygon = false;
     }
-  }
+  };
 
-  window.addEventListener("keydown", (e: KeyboardEvent) => {
-    if (e.key === 'Backspace' && config.type == 'POLYGON' && config.isDrawingPolygon ) {
+  window.addEventListener('keydown', (e: KeyboardEvent) => {
+    if (
+      e.key === 'Backspace' &&
+      config.type == 'POLYGON' &&
+      config.isDrawingPolygon
+    ) {
       const lastShape = shapes[shapes.length - 1];
-      const polygon = lastShape as Polygon
+      const polygon = lastShape as Polygon;
 
-      polygon.removeLastCoordinate()
+      polygon.removeLastCoordinate();
     }
   });
 };
