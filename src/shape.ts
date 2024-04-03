@@ -194,7 +194,11 @@ export class Rectangle extends Shape {
     for (let i = 0; i < 6; i++) {
       this.colors.push(color);
     }
-    for (let i = 0; i < 2; i++) {
+    /**
+     * Elements order:
+     * top-left, bottom-left, top-right, bottom-right
+     */
+    for (let i = 0; i < 4; i++) {
       this.coordinates.push(startCoordinate);
     }
   }
@@ -205,11 +209,19 @@ export class Rectangle extends Shape {
    * @param endCoordinate
    */
   updateEndCoordinate(endCoordinate: number[]) {
+    const startCoordinate = this.coordinates[0];
+
+    // update left-bottom coordinate
+    this.coordinates[1] = [startCoordinate[0], endCoordinate[1]];
+
+    // update right-top coordinate
+    this.coordinates[2] = [endCoordinate[0], startCoordinate[1]];
+
     this.coordinates[this.coordinates.length - 1] = endCoordinate;
   }
 
   render(webglUtils: WebglUtils) {
-    if (this.coordinates.length !== 2) {
+    if (this.coordinates.length !== 4) {
       return;
     }
 
@@ -218,8 +230,8 @@ export class Rectangle extends Shape {
 
     const x1 = this.coordinates[0][0];
     const y1 = this.coordinates[0][1];
-    const x2 = this.coordinates[1][0];
-    const y2 = this.coordinates[1][1];
+    const x2 = this.coordinates[3][0];
+    const y2 = this.coordinates[3][1];
 
     // draw two triangle
     const coordinates = new Float32Array([
@@ -264,7 +276,7 @@ export class Square extends Shape {
     for (let i = 0; i < 6; i++) {
       this.colors.push(color);
     }
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < 4; i++) {
       this.coordinates.push(startCoordinate);
     }
   }
@@ -294,11 +306,17 @@ export class Square extends Shape {
       endCoordinate[1] = startCoordinate[1] + width;
     }
 
+    // update left-bottom coordinate
+    this.coordinates[1] = [startCoordinate[0], endCoordinate[1]];
+
+    // update right-top coordinate
+    this.coordinates[2] = [endCoordinate[0], startCoordinate[1]];
+
     this.coordinates[this.coordinates.length - 1] = endCoordinate;
   }
 
   render(webglUtils: WebglUtils) {
-    if (this.coordinates.length !== 2) {
+    if (this.coordinates.length !== 4) {
       return;
     }
 
@@ -307,8 +325,8 @@ export class Square extends Shape {
 
     const x1 = this.coordinates[0][0];
     const y1 = this.coordinates[0][1];
-    const x2 = this.coordinates[1][0];
-    const y2 = this.coordinates[1][1];
+    const x2 = this.coordinates[3][0];
+    const y2 = this.coordinates[3][1];
 
     // draw two triangle
     const coordinates = new Float32Array([
