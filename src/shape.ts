@@ -119,6 +119,27 @@ export abstract class Shape {
     }
   }
 
+  renderOutline(webglUtils: WebglUtils): void {
+    if (!this.isActive) {
+      return;
+    }
+
+    // color for every point
+    const colors = [];
+
+    for (let i = 0; i < this.coordinates.length; i++) {
+      colors.push([0, 0, 0, 1]); // black
+    }
+
+    webglUtils.renderColor(new Float32Array(flattenMatrix(colors)), 4);
+    webglUtils.renderVertex(
+      new Float32Array(flattenMatrix(this.coordinates)),
+      2
+    );
+    webglUtils.gl.drawArrays(webglUtils.gl.POINTS, 0, this.coordinates.length);
+  }
+
+  abstract isContained(x: number, y: number): Boolean;
   abstract render(webglUtils: WebglUtils): void;
   abstract scale(x: number, y: number): void;
   abstract rotate(degree: number): void;
@@ -168,6 +189,10 @@ export class Line extends Shape {
   rotate(degree: number): void {}
 
   scale(x: number, y: number): void {}
+
+  isContained(x: number, y: number): Boolean {
+    return false;
+  }
 }
 
 export class Rectangle extends Shape {
@@ -250,6 +275,10 @@ export class Rectangle extends Shape {
   rotate(degree: number): void {}
 
   scale(x: number, y: number): void {}
+
+  isContained(x: number, y: number): Boolean {
+    return false;
+  }
 }
 
 export class Square extends Shape {
@@ -345,6 +374,10 @@ export class Square extends Shape {
   rotate(degree: number): void {}
 
   scale(x: number, y: number): void {}
+
+  isContained(x: number, y: number): Boolean {
+    return false;
+  }
 }
 
 export class Polygon extends Shape {
@@ -432,4 +465,8 @@ export class Polygon extends Shape {
   rotate(degree: number): void {}
 
   scale(x: number, y: number): void {}
+
+  isContained(x: number, y: number): Boolean {
+    return false;
+  }
 }
