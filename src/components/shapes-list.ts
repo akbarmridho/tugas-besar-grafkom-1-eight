@@ -2,11 +2,13 @@ import { Shape } from '../shape.ts';
 import { rgbToHex } from '../utils';
 import { Config } from '../utils/interfaces.ts';
 import { deactivateAllShapeBtns } from './shape-btn.ts';
+import { Tweakpane } from './tweakpane.ts';
 export const handleOnShapeAdded = (
   shape: Shape,
   color: string,
   allShapes: Shape[],
-  config: Config
+  config: Config,
+  tweakpane: Tweakpane
 ) => {
   const shapesContainer = document.getElementById('shapes-container');
   if (!shapesContainer) return;
@@ -30,6 +32,13 @@ export const handleOnShapeAdded = (
       this.classList.remove('bg-input');
       shape.setIsActive(true);
       deactivateAllShapeBtns(config);
+
+      const centroid = shape.getCentroid();
+      tweakpane.translateParams.translate = {
+        x: centroid[0],
+        y: centroid[1]
+      };
+      tweakpane.translateBinding.refresh();
     }
   });
 

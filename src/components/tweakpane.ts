@@ -8,10 +8,6 @@ const COLOR_PARAMS = {
   color: { r: 255, g: 0, b: 55 }
 };
 
-const TRANSLATE_PARAMS = {
-  translate: { x: 50, y: 50 }
-};
-
 const SAVE_BUTTON_PARAMS = {
   title: 'Save to file'
 };
@@ -30,6 +26,9 @@ export class Tweakpane {
   shapes: Shape[];
   // @ts-ignore
   selectedColor: RGB;
+  translateParams = {
+    translate: { x: 0, y: 0 }
+  };
 
   constructor(shapes: Shape[]) {
     this.shapes = shapes;
@@ -51,13 +50,20 @@ export class Tweakpane {
     this.changeColor(COLOR_PARAMS.color);
 
     this.translateBinding = this.pane.addBinding(
-      TRANSLATE_PARAMS,
+      this.translateParams,
       'translate',
       {
         picker: 'inline',
-        expanded: true
+        expanded: true,
+        min: -1,
+        max: 1,
+        step: 0.01
       }
-    );
+    ).on('change', (ev) => {
+      // @ts-ignore
+      this.translate(ev.value.x, ev.value.y);
+    });
+
     this.scaleBlade = this.pane.addBlade({
       view: 'slider',
       label: 'scale',
@@ -84,6 +90,12 @@ export class Tweakpane {
       changeShapeSvgColor(shape);
     });
   };
+
+  translate = (x: number, y: number) => {
+    this.changeShapeProperties((shape) => {
+      shape.translate(x, y)
+    });
+  }
 
   changeShapeProperties = (callback: (shape: Shape) => void) => {
     this.shapes.forEach((shape: Shape) => {

@@ -107,7 +107,7 @@ const onDocumentReady = () => {
         break;
     }
     if (!!newShape) {
-      handleOnShapeAdded(newShape, rgbToHex(selectedColor), shapes, config);
+      handleOnShapeAdded(newShape, rgbToHex(selectedColor), shapes, config, tweakpane);
     }
   };
 
@@ -191,7 +191,8 @@ const onDocumentReady = () => {
                 shape,
                 rgbToHex(arrayToRgbAndDenormalize(shape.getColor()[0])),
                 shapes,
-                config
+                config,
+                tweakpane
               );
             }
           });

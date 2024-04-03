@@ -64,6 +64,19 @@ export abstract class Shape {
   }
 
   getCentroid() {
+    let sumX = 0;
+    let sumY = 0;
+
+    this.coordinates.forEach(([x, y]) => {
+      sumX += x;
+      sumY += y;
+    });
+
+    const centroidX = sumX / this.coordinates.length;
+    const centroidY = sumY / this.coordinates.length;
+
+    this.centroid = [centroidX, centroidY];
+
     return this.centroid;
   }
 
@@ -97,8 +110,22 @@ export abstract class Shape {
     return new Float32Array(flattenMatrix(this.colors));
   }
 
+  translate(newCentroidX: number, newCentroidY: number) {
+    // Calculate the translation values
+    const translateX = newCentroidX - this.centroid[0];
+    const translateY = newCentroidY - this.centroid[1];
+
+    // Translate all points
+    for (let i = 0; i < this.coordinates.length; i++) {
+      this.coordinates[i][0] += translateX;
+      this.coordinates[i][1] += translateY;
+    }
+
+    // Update the centroid
+    this.centroid = [newCentroidX, newCentroidY];
+  }
+
   abstract render(webglUtils: WebglUtils): void;
-  abstract translate(x: number, y: number): void;
   abstract scale(x: number, y: number): void;
   abstract rotate(degree: number): void;
 }
@@ -147,8 +174,6 @@ export class Line extends Shape {
   rotate(degree: number): void {}
 
   scale(x: number, y: number): void {}
-
-  translate(x: number, y: number): void {}
 }
 
 export class Rectangle extends Shape {
@@ -219,8 +244,6 @@ export class Rectangle extends Shape {
   rotate(degree: number): void {}
 
   scale(x: number, y: number): void {}
-
-  translate(x: number, y: number): void {}
 }
 
 export class Square extends Shape {
@@ -310,8 +333,6 @@ export class Square extends Shape {
   rotate(degree: number): void {}
 
   scale(x: number, y: number): void {}
-
-  translate(x: number, y: number): void {}
 }
 
 export class Polygon extends Shape {
@@ -331,10 +352,8 @@ export class Polygon extends Shape {
     this.id = 'polygon-' + Polygon.count;
     this.name = 'polygon ' + Polygon.count;
     this.colors.push(color);
-    for (let i = 0; i < 2; i++) {
-      this.coordinates.push(startCoordinate);
-    }
-    this.isDrawing = true
+    this.coordinates.push(startCoordinate);
+    this.isDrawing = true;
   }
 
   /**
@@ -347,17 +366,19 @@ export class Polygon extends Shape {
   }
 
   addCoordinate(newCoordinate: number[]) {
-    this.coordinates.push(newCoordinate)
+    this.coordinates[this.coordinates.length - 1] = newCoordinate;
+    this.coordinates.push(newCoordinate);
   }
 
   finishDrawing() {
-    this.removeLastCoordinate()
-    this.isDrawing = false
+    this.removeLastCoordinate();
+    this.removeLastCoordinate();
+    this.isDrawing = false;
   }
 
   removeLastCoordinate() {
     if (this.coordinates.length > 2) {
-      this.coordinates.pop()
+      this.coordinates.pop();
     }
   }
 
@@ -369,15 +390,12 @@ export class Polygon extends Shape {
 
     // Set the color for every point
     const colors = new Array(this.coordinates.length).fill(this.colors[0]);
-    webglUtils.renderColor(
-        new Float32Array(flattenMatrix(colors)),
-        4
-    );
+    webglUtils.renderColor(new Float32Array(flattenMatrix(colors)), 4);
 
     // If the polygon is still being drawn
     if (this.isDrawing) {
       // Draw a line between all coordinates
-      for (let i = 0; i < this.coordinates.length - 1 ; i++) {
+      for (let i = 0; i < this.coordinates.length - 1; i++) {
         const coordinates = new Float32Array([
           this.coordinates[i][0],
           this.coordinates[i][1],
@@ -389,17 +407,17 @@ export class Polygon extends Shape {
       }
     } else {
       // If the polygon is finished being drawn, draw the polygon
-      const coordinates = new Float32Array(
-          this.coordinates.flat()
-      );
+      const coordinates = new Float32Array(this.coordinates.flat());
       webglUtils.renderVertex(coordinates, 2);
-      webglUtils.gl.drawArrays(webglUtils.gl.TRIANGLE_FAN, 0, this.coordinates.length);
+      webglUtils.gl.drawArrays(
+        webglUtils.gl.TRIANGLE_FAN,
+        0,
+        this.coordinates.length
+      );
     }
   }
 
   rotate(degree: number): void {}
 
   scale(x: number, y: number): void {}
-
-  translate(x: number, y: number): void {}
 }
