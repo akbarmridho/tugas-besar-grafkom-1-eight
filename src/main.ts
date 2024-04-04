@@ -13,7 +13,13 @@ import {
 import vertexShaderSource from './glsl/vertex.glsl';
 // @ts-ignore
 import fragmentShaderSource from './fragment/fragment.frag';
-import { shapes, config, tweakpane } from './state.ts';
+import {
+  shapes,
+  config,
+  tweakpane,
+  getActiveShape,
+  getActiveVertex
+} from './state.ts';
 import { Line } from './models/line.ts';
 import { Polygon } from './models/polygon.ts';
 import { Square } from './models/square.ts';
@@ -210,6 +216,20 @@ const onDocumentReady = () => {
       const polygon = lastShape as Polygon;
 
       polygon.removeLastCoordinate();
+    }
+
+    if (e.key === 'Backspace') {
+      const activeShape = getActiveShape();
+      if (!activeShape || !(activeShape instanceof Polygon)) {
+        return;
+      }
+
+      const activeVertex = getActiveVertex();
+      if (!activeVertex) {
+        return;
+      }
+
+      activeShape.removeCoordinate(activeVertex);
     }
   });
 

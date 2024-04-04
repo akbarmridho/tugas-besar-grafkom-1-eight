@@ -54,6 +54,17 @@ export class Polygon extends Shape {
     }
   }
 
+  removeCoordinate(coordinate: number[]): void {
+    const index = this.coordinates.findIndex(
+      (coord) => coord[0] === coordinate[0] && coord[1] === coordinate[1]
+    );
+    if (index !== -1) {
+      this.coordinates.splice(index, 1);
+    } else {
+      console.log('Coordinate not found');
+    }
+  }
+
   setIsDrawing(isDrawing: boolean) {
     this.isDrawing = false;
   }
