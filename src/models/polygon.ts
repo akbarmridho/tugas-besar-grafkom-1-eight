@@ -19,7 +19,8 @@ export class Polygon extends Shape {
     Polygon.count += 1;
     this.id = 'polygon-' + Polygon.count;
     this.name = 'Polygon ' + Polygon.count;
-    this.colors.push(color);
+    this.colors.push([...color]);
+    this.colors.push([...color]);
     this.coordinates.push(startCoordinate);
     this.isDrawing = true;
   }
@@ -40,12 +41,25 @@ export class Polygon extends Shape {
 
   appendCoordinate(newCoordinate: number[]) {
     this.coordinates.push(newCoordinate);
+    this.colors.push([this.colors[0][0], this.colors[0][1], this.colors[0][2]]);
+  }
+
+  computeConvexHull() {
+    this.coordinates = computeConvexHull(this.coordinates);
   }
 
   finishDrawing() {
     this.removeLastCoordinate();
     this.removeLastCoordinate();
+    // Compute the convex hull of the coordinates
+    this.computeConvexHull();
     this.isDrawing = false;
+    const color = this.colors[0];
+    this.colors = [];
+
+    for (let i = 0; i < this.coordinates.length; i++) {
+      this.colors.push([...color]);
+    }
   }
 
   removeLastCoordinate() {
@@ -60,6 +74,8 @@ export class Polygon extends Shape {
     );
     if (index !== -1) {
       this.coordinates.splice(index, 1);
+      this.colors.splice(index, 1);
+      this.computeConvexHull();
     } else {
       console.log('Coordinate not found');
     }
@@ -76,8 +92,7 @@ export class Polygon extends Shape {
     }
 
     // Set the color for every point
-    const colors = new Array(this.coordinates.length).fill(this.colors[0]);
-    webglUtils.renderColor(new Float32Array(flattenMatrix(colors)), 4);
+    webglUtils.renderColor(new Float32Array(flattenMatrix(this.colors)), 4);
 
     // If the polygon is still being drawn
     if (this.isDrawing) {
@@ -93,9 +108,6 @@ export class Polygon extends Shape {
         webglUtils.gl.drawArrays(webglUtils.gl.LINES, 0, 2);
       }
     } else {
-      // Compute the convex hull of the coordinates
-      this.coordinates = computeConvexHull(this.coordinates);
-
       // Convert the coordinates to a flat array for rendering
       const coordinates = new Float32Array(this.coordinates.flat());
 

@@ -266,6 +266,7 @@ const onDocumentReady = () => {
       const coordinate = getCoordinate(canvas, e);
 
       activePolygon.appendCoordinate(coordinate);
+      activePolygon.computeConvexHull();
     }
   });
 
