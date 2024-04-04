@@ -1,4 +1,4 @@
-import { Shape } from './shape.ts';
+import { Shape } from './models/shape.ts';
 import { Config } from './utils/interfaces.ts';
 import { Tweakpane } from './components/tweakpane.ts';
 

@@ -1,6 +1,10 @@
-import { Line, Polygon, Rectangle, Shape, Square } from '../shape.ts';
+import { Shape } from '../models/shape.ts';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { shapeType } from './interfaces.ts';
+import { Line } from '../models/line.ts';
+import { Square } from '../models/square.ts';
+import { Polygon } from '../models/polygon.ts';
+import { Rectangle } from '../models/rectangle.ts';
 
 export const serializeData = (shapes: Shape[]): string => {
   const result = [];

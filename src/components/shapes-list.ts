@@ -1,4 +1,4 @@
-import { Shape } from '../shape.ts';
+import { Shape } from '../models/shape.ts';
 import { rgbToHex } from '../utils';
 import { deactivateAllShapeBtns } from './shape-btn.ts';
 import { shapes, tweakpane } from '../state.ts';

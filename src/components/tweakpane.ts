@@ -1,6 +1,6 @@
 import { ButtonApi, Pane } from 'tweakpane';
 import { BindingApi } from '@tweakpane/core';
-import { Shape } from '../shape.ts';
+import { Shape } from '../models/shape.ts';
 import {
   arrayToRgbAndDenormalize,
   normalizeRgbColor,

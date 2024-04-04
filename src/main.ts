@@ -2,7 +2,7 @@ import './style.css';
 import { initializeIcons } from './utils/lucide-icons.ts';
 
 import { WebglUtils } from './utils/webgl-utils.ts';
-import { Line, Rectangle, Shape, Square, Polygon } from './shape.ts';
+import { Shape } from './models/shape.ts';
 import { getCoordinate, normalizeRgbColor, rgbToHex } from './utils';
 import { handleOnShapeAdded } from './components/shapes-list.ts';
 import {
@@ -14,6 +14,10 @@ import vertexShaderSource from './glsl/vertex.glsl';
 // @ts-ignore
 import fragmentShaderSource from './fragment/fragment.frag';
 import { shapes, config, tweakpane } from './state.ts';
+import { Line } from './models/line.ts';
+import { Polygon } from './models/polygon.ts';
+import { Square } from './models/square.ts';
+import { Rectangle } from './models/rectangle.ts';
 
 document.addEventListener('DOMContentLoaded', function () {
   onDocumentReady();
