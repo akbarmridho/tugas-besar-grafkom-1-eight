@@ -10,6 +10,16 @@ export const clearShapeList = () => {
   shapesContainer.innerHTML = '';
 };
 
+export const deleteShape = (shape: Shape) => {
+  const id = shape.getId();
+  const toDelete = shapes.indexOf(shape);
+  if (toDelete !== -1) shapes.splice(toDelete, 1);
+  const shapeDiv = document.getElementById(id);
+  if (shapeDiv) shapeDiv.remove();
+  const intersectBtn = document.getElementById('intersect-btn');
+  if (intersectBtn) intersectBtn.classList.add('hidden');
+};
+
 export const handleOnShapeAdded = (shape: Shape, color: string) => {
   const shapesContainer = document.getElementById('shapes-container');
   if (!shapesContainer) return;
@@ -22,21 +32,37 @@ export const handleOnShapeAdded = (shape: Shape, color: string) => {
   shapeDiv.addEventListener('click', function () {
     tweakpane.saveLastActive();
     const isActive = this.classList.contains('bg-input-active');
-    shapesContainer.querySelectorAll('.shape').forEach((otherShape) => {
-      otherShape.classList.remove('bg-input-active');
-      otherShape.classList.add('bg-input');
-    });
-    shapes.forEach((otherShape) => {
-      otherShape.setIsActive(false);
-    });
+    const activeShapes = shapes.filter((shape) => shape.getIsActive());
+    const intersectBtn = document.getElementById('intersect-btn');
+    if (activeShapes.length > 1) {
+      shapesContainer.querySelectorAll('.shape').forEach((otherShape) => {
+        otherShape.classList.remove('bg-input-active');
+        otherShape.classList.add('bg-input');
+      });
+      activeShapes.forEach((otherShape) => {
+        otherShape.setIsActive(false);
+      });
+      if (isActive && intersectBtn) {
+        intersectBtn.classList.add('hidden');
+      }
+    }
     if (!isActive) {
       this.classList.add('bg-input-active');
       this.classList.remove('bg-input');
       shape.setIsActive(true);
+      if (intersectBtn) {
+        if (activeShapes.length == 1) {
+          intersectBtn.classList.remove('hidden');
+        } else {
+          intersectBtn.classList.add('hidden');
+        }
+      }
     }
 
     deactivateAllShapeBtns();
-    tweakpane.refreshParams();
+    if (activeShapes.length == 0) {
+      tweakpane.refreshParams();
+    }
   });
 
   const iconElement = document.createElement('div');
@@ -52,10 +78,10 @@ export const handleOnShapeAdded = (shape: Shape, color: string) => {
     <svg color="${color}" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="${color}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-square"><rect width="18" height="18" x="3" y="3" rx="2" id="svg-${shape.getId()}"/></svg>`;
   } else if (shape.getIcon() === 'rectangle-horizontal') {
     iconElement.innerHTML = `
-    <svg color="${color}" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="${color}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rectangle-horizontal"><rect width="20" height="12" x="2" y="6" rx="2"/></svg>`;
+    <svg color="${color}" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="${color}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rectangle-horizontal"><rect width="20" height="12" x="2" y="6" rx="2" id="svg-${shape.getId()}"/></svg>`;
   } else if (shape.getIcon() === 'pentagon') {
     iconElement.innerHTML = `
-    <svg color="${color}" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="${color}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pentagon"><path d="M3.5 8.7c-.7.5-1 1.4-.7 2.2l2.8 8.7c.3.8 1 1.4 1.9 1.4h9.1c.9 0 1.6-.6 1.9-1.4l2.8-8.7c.3-.8 0-1.7-.7-2.2l-7.4-5.3a2.1 2.1 0 0 0-2.4 0Z"/></svg>
+    <svg color="${color}" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="${color}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pentagon"><path d="M3.5 8.7c-.7.5-1 1.4-.7 2.2l2.8 8.7c.3.8 1 1.4 1.9 1.4h9.1c.9 0 1.6-.6 1.9-1.4l2.8-8.7c.3-.8 0-1.7-.7-2.2l-7.4-5.3a2.1 2.1 0 0 0-2.4 0Z" id="svg-${shape.getId()}"/></svg>
     `;
   }
 
