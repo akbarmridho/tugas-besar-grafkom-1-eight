@@ -104,4 +104,8 @@ export class Line extends Shape {
       this.coordinates[0] = coordinate;
     }
   }
+
+  getEdges(): number[][][] {
+    return [];
+  }
 }

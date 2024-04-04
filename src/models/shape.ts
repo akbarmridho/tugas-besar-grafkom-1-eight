@@ -1,15 +1,23 @@
 import { WebglUtils } from '../utils/webgl-utils.ts';
 import { flattenMatrix } from '../utils/vector.ts';
 import { shapeType } from '../utils/interfaces.ts';
+import { Exclude } from 'class-transformer';
 
 export abstract class Shape {
   protected coordinates: number[][];
   protected colors: number[][];
   protected scaleFactor: number;
   protected rotation: number;
+
+  @Exclude()
   protected isActive: boolean;
+
+  @Exclude()
   public activeVertex: number[] | null;
+
+  @Exclude()
   public activeVertexIndex: number | null;
+
   protected type: shapeType;
   protected id: string = '';
   protected name: string = '';
@@ -19,7 +27,11 @@ export abstract class Shape {
     | 'rectangle-horizontal'
     | 'pentagon'
     | '' = '';
+
+  @Exclude()
   protected dragPivot: number[] | null;
+
+  @Exclude()
   protected dragQuadrant:
     | 'TOP_LEFT'
     | 'TOP_RIGHT'

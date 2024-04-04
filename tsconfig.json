@@ -12,6 +12,8 @@
       "resolveJsonModule": true,
       "isolatedModules": true,
       "noEmit": true,
+      "emitDecoratorMetadata": true,
+      "experimentalDecorators": true,
   
       /* Linting */
       "strict": true,

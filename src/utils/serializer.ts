@@ -23,16 +23,37 @@ export const deserializeData = (data: string): Shape[] => {
 
   for (const raw of rawData) {
     const type = raw.type as shapeType;
+    let lineCount = 0;
+    let squareCount = 0;
+    let rectangleCount = 0;
+    let polygonCount = 0;
 
     if (type === 'LINE') {
-      result.push(plainToInstance(Line, raw) as any as Line);
+      const shape = plainToInstance(Line, raw) as any as Line;
+      result.push(shape);
+      const id = parseInt(shape.getId().split('-')[1]);
+      lineCount = Math.max(id, lineCount);
     } else if (type === 'SQUARE') {
-      result.push(plainToInstance(Square, raw) as any as Square);
+      const shape = plainToInstance(Square, raw) as any as Square;
+      result.push(shape);
+      const id = parseInt(shape.getId().split('-')[1]);
+      squareCount = Math.max(id, squareCount);
     } else if (type === 'RECTANGLE') {
-      result.push(plainToInstance(Rectangle, raw) as any as Rectangle);
+      const shape = plainToInstance(Rectangle, raw) as any as Rectangle;
+      result.push(shape);
+      const id = parseInt(shape.getId().split('-')[1]);
+      rectangleCount = Math.max(id, rectangleCount);
     } else if (type === 'POLYGON') {
-      result.push(plainToInstance(Polygon, raw) as any as Polygon);
+      const shape = plainToInstance(Polygon, raw) as any as Polygon;
+      result.push(shape);
+      const id = parseInt(shape.getId().split('-')[1]);
+      polygonCount = Math.max(id, polygonCount);
     }
+
+    Line.count = lineCount;
+    Square.count = squareCount;
+    Rectangle.count = rectangleCount;
+    Polygon.count = polygonCount;
   }
 
   return result;

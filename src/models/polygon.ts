@@ -12,15 +12,17 @@ export class Polygon extends Shape {
    * @param startCoordinate The start coordinate of the line relative to GL corodinates
    * @param color
    */
-  constructor(startCoordinate: number[], color: number[]) {
+  constructor(startCoordinate: number[], color?: number[]) {
     super();
     this.icon = 'pentagon';
     this.type = 'POLYGON';
     Polygon.count += 1;
     this.id = 'polygon-' + Polygon.count;
     this.name = 'Polygon ' + Polygon.count;
-    this.colors.push([...color]);
-    this.colors.push([...color]);
+    if (color) {
+      this.colors.push([...color]);
+      this.colors.push([...color]);
+    }
     this.coordinates.push(startCoordinate);
     this.isDrawing = true;
   }
