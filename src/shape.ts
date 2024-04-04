@@ -567,6 +567,32 @@ export class Polygon extends Shape {
   }
 
   isContained(coordinate: number[]): boolean {
-    return false;
+    const topLeft = [0, 0];
+    const bottomRight = [0, 0];
+
+    this.coordinates.forEach((coord) => {
+      if (coord[0] < topLeft[0]) {
+        topLeft[0] = coord[0];
+      }
+
+      if (coord[1] < topLeft[1]) {
+        topLeft[1] = coord[1];
+      }
+
+      if (coord[0] > bottomRight[0]) {
+        bottomRight[0] = coord[0];
+      }
+
+      if (coord[1] > bottomRight[1]) {
+        bottomRight[1] = coord[1];
+      }
+    });
+
+    return (
+      ((topLeft[0] < coordinate[0] && coordinate[0] < bottomRight[0]) ||
+        (bottomRight[0] < coordinate[0] && coordinate[0] < topLeft[0])) &&
+      ((topLeft[1] < coordinate[1] && coordinate[1] < bottomRight[1]) ||
+        (bottomRight[1] < coordinate[1] && coordinate[1] < topLeft[1]))
+    );
   }
 }

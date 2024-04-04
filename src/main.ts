@@ -153,16 +153,20 @@ const onDocumentReady = () => {
       return;
     }
 
+    e.preventDefault();
+
     const coordinate = getCoordinate(canvas, e);
 
     let shapeFound = false;
+    let newActiveSet = false;
 
     for (const shape of shapes) {
       if (shape.getIsActive() && shape.setActiveVertex(coordinate)) {
         // the if statement has side effect
         shapeFound = true;
-      } else if (shape.isContained(coordinate)) {
+      } else if (shape.isContained(coordinate) && !newActiveSet) {
         shape.setIsActive(true);
+        newActiveSet = true;
         shape.setActiveVertex(coordinate);
         channel.postMessage(shape.getName());
         shapeFound = true;
@@ -171,74 +175,13 @@ const onDocumentReady = () => {
       }
     }
 
-    tweakpane.refreshParams();
+    if (newActiveSet) {
+      tweakpane.refreshParams();
+    }
 
     if (!shapeFound) {
       channel.postMessage(null);
     }
-  });
-
-  // save load behavior
-  tweakpane.registerSaveHandler(() => {
-    showSaveFilePicker({
-      types: [
-        {
-          description: 'Saved model data',
-          accept: {
-            'application/json': ['.json']
-          }
-        }
-      ]
-    })
-      .then((handle) => {
-        handle.createWritable().then((writeable) => {
-          writeable.write(serializeData(shapes)).then(() => {
-            void writeable.close();
-          });
-        });
-      })
-      .catch((e) => {
-        // ignore
-      });
-  });
-
-  tweakpane.registerLoadHandler(() => {
-    showOpenFilePicker({
-      multiple: false,
-      types: [
-        {
-          description: 'Saved model data',
-          accept: {
-            'application/json': ['.json']
-          }
-        }
-      ]
-    })
-      .then((handlers) => {
-        const handle = handlers[0];
-
-        handle.getFile().then((file) => {
-          file.text().then((rawResult) => {
-            const loadedShapes = deserializeData(rawResult);
-
-            // clear old shapes
-            shapes.splice(0, shapes.length);
-
-            // load
-            for (const shape of loadedShapes) {
-              shapes.push(shape);
-              handleOnShapeAdded(
-                shape,
-                rgbToHex(arrayToRgbAndDenormalize(shape.getColor()[0])),
-                shapes
-              );
-            }
-          });
-        });
-      })
-      .catch((e) => {
-        // ignore
-      });
   });
 
   canvas.addEventListener('click', (e) => {

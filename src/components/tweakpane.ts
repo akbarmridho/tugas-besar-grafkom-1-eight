@@ -1,8 +1,15 @@
 import { ButtonApi, Pane } from 'tweakpane';
 import { BindingApi } from '@tweakpane/core';
 import { Shape } from '../shape.ts';
-import { normalizeRgbColor, RGB } from '../utils';
-import { changeShapeSvgColor } from './shapes-list.ts';
+import {
+  arrayToRgbAndDenormalize,
+  normalizeRgbColor,
+  RGB,
+  rgbToHex
+} from '../utils';
+import { changeShapeSvgColor, handleOnShapeAdded } from './shapes-list.ts';
+import { deserializeData, serializeData } from '../utils/serializer.ts';
+import { shapes } from '../state.ts';
 
 const COLOR_PARAMS = {
   color: { r: 255, g: 0, b: 55 }
@@ -77,14 +84,75 @@ export class Tweakpane {
 
     this.loadButton = this.pane.addButton(LOAD_BUTTON_PARAMS);
     this.saveButton = this.pane.addButton(SAVE_BUTTON_PARAMS);
+
+    this.registerSaveHandler();
+    this.registerLoadHandler();
   }
 
-  registerSaveHandler(fn: () => void) {
-    this.saveButton.on('click', fn);
+  registerSaveHandler() {
+    this.saveButton.on('click', () => {
+      showSaveFilePicker({
+        types: [
+          {
+            description: 'Saved model data',
+            accept: {
+              'application/json': ['.json']
+            }
+          }
+        ]
+      })
+        .then((handle) => {
+          handle.createWritable().then((writeable) => {
+            writeable.write(serializeData(shapes)).then(() => {
+              void writeable.close();
+            });
+          });
+        })
+        .catch((e) => {
+          // ignore
+        });
+    });
   }
 
-  registerLoadHandler(fn: () => void) {
-    this.loadButton.on('click', fn);
+  registerLoadHandler() {
+    this.loadButton.on('click', () => {
+      showOpenFilePicker({
+        multiple: false,
+        types: [
+          {
+            description: 'Saved model data',
+            accept: {
+              'application/json': ['.json']
+            }
+          }
+        ]
+      })
+        .then((handlers) => {
+          const handle = handlers[0];
+
+          handle.getFile().then((file) => {
+            file.text().then((rawResult) => {
+              const loadedShapes = deserializeData(rawResult);
+
+              // clear old shapes
+              shapes.splice(0, shapes.length);
+
+              // load
+              for (const shape of loadedShapes) {
+                shapes.push(shape);
+                handleOnShapeAdded(
+                  shape,
+                  rgbToHex(arrayToRgbAndDenormalize(shape.getColor()[0])),
+                  shapes
+                );
+              }
+            });
+          });
+        })
+        .catch((e) => {
+          // ignore
+        });
+    });
   }
 
   changeColor = (color: RGB) => {
