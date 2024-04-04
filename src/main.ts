@@ -253,6 +253,17 @@ const onDocumentReady = () => {
 
       activeShape.removeCoordinate(activeVertex);
     }
+
+    const activeShape = getActiveShape();
+
+    if (e.key === 'Delete' && activeShape) {
+      const idx = shapes.findIndex((s) => s === activeShape);
+
+      if (idx !== -1) {
+        shapes.splice(idx, 1);
+        deleteShape(activeShape);
+      }
+    }
   });
 
   canvas.addEventListener('contextmenu', (e) => {
