@@ -79,17 +79,17 @@ export class Polygon extends Shape {
       }
     } else {
       // Compute the convex hull of the coordinates
-      const hullCoordinates = computeConvexHull(this.coordinates);
+      this.coordinates = computeConvexHull(this.coordinates);
 
       // Convert the coordinates to a flat array for rendering
-      const coordinates = new Float32Array(hullCoordinates.flat());
+      const coordinates = new Float32Array(this.coordinates.flat());
 
       // Render the convex hull
       webglUtils.renderVertex(coordinates, 2);
       webglUtils.gl.drawArrays(
         webglUtils.gl.TRIANGLE_FAN,
         0,
-        hullCoordinates.length
+        this.coordinates.length
       );
     }
   }
