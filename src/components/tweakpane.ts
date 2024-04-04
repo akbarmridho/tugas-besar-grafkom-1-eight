@@ -193,9 +193,10 @@ export class Tweakpane {
   };
 
   changeShapeProperties = (callback: (shape: Shape) => void) => {
-    this.shapes.forEach((shape: Shape) => {
-      if (shape.getIsActive()) callback(shape);
-    });
+    const activeShapes = this.shapes.filter((shape) => shape.getIsActive());
+    if (activeShapes.length == 1) {
+      callback(activeShapes[0]);
+    }
   };
 
   saveLastActive() {
