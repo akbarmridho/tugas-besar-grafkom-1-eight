@@ -4,7 +4,8 @@ import {
   RectangleHorizontal,
   Slash,
   Pentagon,
-  MousePointer
+  MousePointer,
+  Blend
 } from 'lucide';
 
 export const initializeIcons = () => {
@@ -14,7 +15,8 @@ export const initializeIcons = () => {
       RectangleHorizontal,
       Slash,
       Pentagon,
-      MousePointer
+      MousePointer,
+      Blend
     }
   });
 };

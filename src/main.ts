@@ -4,7 +4,7 @@ import { initializeIcons } from './utils/lucide-icons.ts';
 import { WebglUtils } from './utils/webgl-utils.ts';
 import { Shape } from './models/shape.ts';
 import { getCoordinate, normalizeRgbColor, rgbToHex } from './utils';
-import { handleOnShapeAdded } from './components/shapes-list.ts';
+import { deleteShape, handleOnShapeAdded } from './components/shapes-list.ts';
 import {
   onShapeButtonClick,
   setupCursorButtonClick
@@ -18,6 +18,7 @@ import { Line } from './models/line.ts';
 import { Polygon } from './models/polygon.ts';
 import { Square } from './models/square.ts';
 import { Rectangle } from './models/rectangle.ts';
+import { getShapeIntersections } from './utils/geometry.ts';
 
 document.addEventListener('DOMContentLoaded', function () {
   onDocumentReady();
@@ -225,4 +226,28 @@ const onDocumentReady = () => {
       activePolygon.appendCoordinate(coordinate);
     }
   });
+
+  const intersectBtn = document.getElementById('intersect-btn');
+  if (intersectBtn) {
+    intersectBtn.onclick = (e: MouseEvent) => {
+      const activeShapes = shapes.filter((shape) => shape.getIsActive());
+      if (activeShapes.length < 2) return;
+      const coordinates = getShapeIntersections(
+        activeShapes[0],
+        activeShapes[1]
+      );
+      if (coordinates.length > 2) {
+        const polygon = new Polygon(
+          coordinates[0],
+          activeShapes[0].getColor()[0]
+        );
+        deleteShape(activeShapes[0]);
+        deleteShape(activeShapes[1]);
+        coordinates.forEach((coordinate) => polygon.addCoordinate(coordinate));
+        polygon.setIsDrawing(false);
+        shapes.push(polygon);
+        handleOnShapeAdded(polygon, rgbToHex(tweakpane.selectedColor));
+      }
+    };
+  }
 };

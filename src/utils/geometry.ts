@@ -1,4 +1,5 @@
 import { orientation, distSq } from './math.ts';
+import { Shape } from '../models/shape.ts';
 
 /**
  * Computes the convex hull of a set of points using the Graham's scan algorithm.
@@ -73,4 +74,84 @@ function compare(p1: number[], p2: number[], p0: number[]): number {
   let o = orientation(p0, p1, p2);
   if (o == 0) return distSq(p0, p2) >= distSq(p0, p1) ? -1 : 1;
   return o == 2 ? -1 : 1;
+}
+
+export function getShapeIntersections(shape1: Shape, shape2: Shape) {
+  const vertices1 = shape1.getCoordinates();
+  const vertices2 = shape2.getCoordinates();
+  let vertices: number[][] = [];
+
+  // find the vertices that are inside the shapes
+  vertices1.forEach((vertice) => {
+    if (shape2.isContained(vertice)) vertices.push([...vertice]);
+  });
+  vertices2.forEach((vertice) => {
+    if (shape1.isContained(vertice)) vertices.push([...vertice]);
+  });
+
+  const edges1 = shape1.getEdges();
+  const edges2 = shape2.getEdges();
+
+  let i = 0;
+  for (const edge1 of edges1) {
+    for (const edge2 of edges2) {
+      i += 1;
+      const intersection = lineIntersection(edge1, edge2);
+      if (!intersection) continue;
+      vertices.push([...intersection]);
+    }
+  }
+
+  return vertices;
+}
+
+function comparePointByY(a: number[], b: number[]) {
+  if (a[1] == b[1]) return a[0] - b[0];
+  return a[1] - b[1];
+}
+
+function comparePointByX(a: number[], b: number[]) {
+  if (a[0] == b[0]) return a[1] - b[1];
+  return a[0] - b[0];
+}
+
+function lineIntersection(
+  line1: number[][],
+  line2: number[][]
+): number[] | null {
+  const xdiff = [line1[0][0] - line1[1][0], line2[0][0] - line2[1][0]];
+  const ydiff = [line1[0][1] - line1[1][1], line2[0][1] - line2[1][1]];
+
+  function det(a: number[], b: number[]): number {
+    return a[0] * b[1] - a[1] * b[0];
+  }
+
+  const div = det(xdiff, ydiff);
+  if (div === 0) {
+    return null;
+  }
+
+  const d = [det(line1[0], line1[1]), det(line2[0], line2[1])];
+  const x = det(d, xdiff) / div;
+  const y = det(d, ydiff) / div;
+
+  // check if x and y is within one of the lines' vertice
+  // pick 1 line, sort by Y
+  line1.sort(comparePointByY); // we will get line1 sorted from smallest y to largest y
+  line2.sort(comparePointByY);
+  // also sort by X
+  const line1ByX = line1.map((points) => [...points]).sort(comparePointByX);
+  const line2ByX = line2.map((points) => [...points]).sort(comparePointByX);
+  if (
+    y >= line1[0][1] - 0.1 &&
+    y <= line1[1][1] + 0.1 &&
+    x >= line1ByX[0][0] - 0.1 &&
+    x <= line1ByX[1][0] + 0.1 &&
+    y >= line2[0][1] - 0.1 &&
+    y <= line2[1][1] + 0.1 &&
+    x >= line2ByX[0][0] - 0.1 &&
+    x <= line2ByX[1][0] + 0.1
+  )
+    return [x, y];
+  return null;
 }
