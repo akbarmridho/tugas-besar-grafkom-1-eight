@@ -49,6 +49,10 @@ export abstract class Shape {
     return this.scaleFactor;
   }
 
+  getCoordinates() {
+    return this.coordinates;
+  }
+
   getCentroid() {
     let sumX = 0;
     let sumY = 0;
@@ -117,6 +121,8 @@ export abstract class Shape {
       this.coordinates[i][0] += translateX;
       this.coordinates[i][1] += translateY;
     }
+
+    console.log(this.coordinates);
   }
 
   scale(newScale: number) {
@@ -202,6 +208,36 @@ export abstract class Shape {
     return this.activeVertex !== null;
   }
 
-  abstract isContained(coordinate: number[]): boolean;
+  isContained(coordinate: number[]): boolean {
+    const numVertices = this.coordinates.length;
+    const x = coordinate[0];
+    const y = coordinate[1];
+    let isContained = false;
+
+    let p1 = this.coordinates[0];
+    let p2;
+
+    for (let i = 1; i <= numVertices; i++) {
+      p2 = this.coordinates[i % numVertices];
+
+      if (y > Math.min(p1[1], p2[1])) {
+        if (y <= Math.max(p1[1], p2[1])) {
+          if (x <= Math.max(p1[0], p2[0])) {
+            const xIntersection =
+              ((y - p1[1]) * (p2[0] - p1[0])) / (p2[1] - p1[1]) + p1[0];
+
+            if (p1[0] === p2[0] || x <= xIntersection) {
+              isContained = !isContained;
+            }
+          }
+        }
+      }
+
+      p1 = p2;
+    }
+
+    return isContained;
+  }
   abstract render(webglUtils: WebglUtils): void;
+  abstract getEdges(): number[][][];
 }

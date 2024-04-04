@@ -119,4 +119,13 @@ export class Square extends Shape {
           coordinate[1] < this.coordinates[0][1]))
     );
   }
+
+  getEdges(): number[][][] {
+    return [
+      [this.coordinates[0], this.coordinates[1]],
+      [this.coordinates[0], this.coordinates[2]],
+      [this.coordinates[1], this.coordinates[3]],
+      [this.coordinates[2], this.coordinates[3]]
+    ];
+  }
 }

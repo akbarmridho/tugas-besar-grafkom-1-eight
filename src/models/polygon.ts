@@ -18,7 +18,7 @@ export class Polygon extends Shape {
     this.type = 'POLYGON';
     Polygon.count += 1;
     this.id = 'polygon-' + Polygon.count;
-    this.name = 'polygon ' + Polygon.count;
+    this.name = 'Polygon ' + Polygon.count;
     this.colors.push(color);
     this.coordinates.push(startCoordinate);
     this.isDrawing = true;
@@ -52,6 +52,10 @@ export class Polygon extends Shape {
     if (this.coordinates.length > 2) {
       this.coordinates.pop();
     }
+  }
+
+  setIsDrawing(isDrawing: boolean) {
+    this.isDrawing = false;
   }
 
   render(webglUtils: WebglUtils) {
@@ -94,33 +98,15 @@ export class Polygon extends Shape {
     }
   }
 
-  isContained(coordinate: number[]): boolean {
-    const topLeft = [0, 0];
-    const bottomRight = [0, 0];
-
-    this.coordinates.forEach((coord) => {
-      if (coord[0] < topLeft[0]) {
-        topLeft[0] = coord[0];
-      }
-
-      if (coord[1] < topLeft[1]) {
-        topLeft[1] = coord[1];
-      }
-
-      if (coord[0] > bottomRight[0]) {
-        bottomRight[0] = coord[0];
-      }
-
-      if (coord[1] > bottomRight[1]) {
-        bottomRight[1] = coord[1];
+  getEdges(): number[][][] {
+    const edges: number[][][] = [];
+    this.coordinates.forEach((coordinate, index) => {
+      if (index < this.coordinates.length - 1) {
+        edges.push([this.coordinates[index], this.coordinates[index + 1]]);
+      } else {
+        edges.push([this.coordinates[index], this.coordinates[0]]);
       }
     });
-
-    return (
-      ((topLeft[0] < coordinate[0] && coordinate[0] < bottomRight[0]) ||
-        (bottomRight[0] < coordinate[0] && coordinate[0] < topLeft[0])) &&
-      ((topLeft[1] < coordinate[1] && coordinate[1] < bottomRight[1]) ||
-        (bottomRight[1] < coordinate[1] && coordinate[1] < topLeft[1]))
-    );
+    return edges;
   }
 }
