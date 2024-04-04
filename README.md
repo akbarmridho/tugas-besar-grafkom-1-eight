@@ -10,7 +10,8 @@ npm ci
 
 - Run the Program
 ```bash
-npm run dev
+npm run build
+npm run preview
 ```
 
 - Program should run on `http://localhost:5173/`
