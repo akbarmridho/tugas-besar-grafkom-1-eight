@@ -13,6 +13,7 @@ import {
 import { handleOnShapeAdded } from './components/shapes-list.ts';
 import { Config } from './utils/interfaces.ts';
 import {
+  deactivateAllShapeBtns,
   onShapeButtonClick,
   setupCursorButtonClick
 } from './components/shape-btn.ts';
@@ -82,7 +83,7 @@ const onDocumentReady = () => {
   onShapeButtonClick('polygon-btn', 'POLYGON', config);
 
   // canvas logic
-  canvas.onmousedown = (e: MouseEvent) => {
+  canvas.addEventListener('mousedown', (e: MouseEvent) => {
     config.isMouseDown = true;
     let newShape: Shape | null = null;
     const coordinate = getCoordinate(canvas, e);
@@ -127,9 +128,9 @@ const onDocumentReady = () => {
         tweakpane
       );
     }
-  };
+  });
 
-  canvas.onmousemove = (e: MouseEvent) => {
+  canvas.addEventListener('mousemove', (e: MouseEvent) => {
     const coordinate = getCoordinate(canvas, e);
     const lastShape = shapes[shapes.length - 1];
 
@@ -154,15 +155,33 @@ const onDocumentReady = () => {
       const square = lastShape as Square;
       square.updateEndCoordinate(coordinate);
     }
-  };
+  });
 
-  canvas.onmouseup = () => {
+  canvas.addEventListener('mouseup', () => {
     config.isMouseDown = false;
-  };
+  });
 
-  canvas.onclick = (e) => {
-    //
-  };
+  const channel = new BroadcastChannel('container-button-channel');
+
+  canvas.addEventListener('click', (e) => {
+    if (config.type !== '') {
+      return;
+    }
+
+    const coordinate = getCoordinate(canvas, e);
+
+    for (const shape of shapes) {
+      if (shape.getIsActive() && shape.setActiveVertex(coordinate)) {
+        // the if statement has side effect
+      } else if (shape.isContained(coordinate)) {
+        shape.setIsActive(true);
+        shape.setActiveVertex(coordinate);
+        channel.postMessage(shape.getName());
+      } else {
+        shape.setIsActive(false);
+      }
+    }
+  });
 
   // save load behavior
   tweakpane.registerSaveHandler(() => {

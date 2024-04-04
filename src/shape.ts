@@ -6,10 +6,10 @@ import { computeConvexHull } from './utils/geometry.ts';
 export abstract class Shape {
   protected coordinates: number[][];
   protected colors: number[][];
-  protected translation: number[];
   protected scaleFactor: number;
   protected rotation: number;
   protected isActive: boolean;
+  public activeVertex: number[] | null;
   protected type: shapeType;
   protected id: string = '';
   protected name: string = '';
@@ -20,25 +20,19 @@ export abstract class Shape {
     | 'pentagon'
     | '' = '';
 
-  constructor(
+  protected constructor(
     coordinates?: number[][],
     colors?: number[][],
-    translation?: number[],
-    scaleVector?: number[],
     rotation?: number,
     isActive?: boolean
   ) {
     this.coordinates = coordinates || [];
     this.colors = colors || [];
-    this.translation = translation || [0, 0];
     this.scaleFactor = 1;
     this.rotation = rotation || 0;
     this.isActive = isActive || false;
     this.type = '';
-  }
-
-  getPosition() {
-    return this.coordinates;
+    this.activeVertex = null;
   }
 
   getType() {
@@ -49,16 +43,8 @@ export abstract class Shape {
     return this.colors;
   }
 
-  getTranslation() {
-    return this.translation;
-  }
-
   getScaleFactor() {
     return this.scaleFactor;
-  }
-
-  getRotation() {
-    return this.rotation;
   }
 
   getCentroid() {
@@ -100,6 +86,10 @@ export abstract class Shape {
 
   setIsActive(isActive: boolean) {
     this.isActive = isActive;
+
+    if (!isActive) {
+      this.activeVertex = null;
+    }
   }
 
   getFlattenedColor() {
@@ -156,8 +146,16 @@ export abstract class Shape {
     // color for every point
     const colors = [];
 
-    for (let i = 0; i < this.coordinates.length; i++) {
-      colors.push([0, 0, 0, 1]); // black
+    for (const coordinate of this.coordinates) {
+      if (
+        this.activeVertex !== null &&
+        this.activeVertex[0] === coordinate[0] &&
+        this.activeVertex[1] === coordinate[1]
+      ) {
+        colors.push([0, 0, 1, 1]); // blue
+      } else {
+        colors.push([0, 0, 0, 1]); // black
+      }
     }
 
     webglUtils.renderColor(new Float32Array(flattenMatrix(colors)), 4);
@@ -168,9 +166,36 @@ export abstract class Shape {
     webglUtils.gl.drawArrays(webglUtils.gl.POINTS, 0, this.coordinates.length);
   }
 
-  abstract isContained(x: number, y: number): Boolean;
+  /**
+   * Return true if there is a vertex that close enough
+   * @param clickCoordinate
+   */
+  setActiveVertex(clickCoordinate: number[]): boolean {
+    const threshold = 100; // 10^2
+    let closest: number[] | null = null;
+
+    for (const coordinate of this.coordinates) {
+      const dist =
+        (coordinate[0] - clickCoordinate[0]) ** 2 +
+        (coordinate[1] - clickCoordinate[1]) ** 2;
+
+      if (dist < threshold) {
+        closest = coordinate;
+        break;
+      }
+    }
+
+    if (closest !== null) {
+      console.log('got closest vertex');
+    }
+
+    this.activeVertex = closest;
+
+    return this.activeVertex !== null;
+  }
+
+  abstract isContained(coordinate: number[]): boolean;
   abstract render(webglUtils: WebglUtils): void;
-  abstract rotate(degree: number): void;
 }
 
 export class Line extends Shape {
@@ -214,10 +239,48 @@ export class Line extends Shape {
     }
   }
 
-  rotate(degree: number): void {}
+  isContained(coordinate: number[]): boolean {
+    const threshold = 5; // 5px
 
-  isContained(x: number, y: number): Boolean {
-    return false;
+    // distance of a point to line
+    // d = |Ax1 + By1 + C| / (A2 + B2)½
+
+    const x = coordinate[0];
+    const y = coordinate[1];
+    const x1 = this.coordinates[0][0];
+    const y1 = this.coordinates[0][1];
+    const x2 = this.coordinates[1][0];
+    const y2 = this.coordinates[1][1];
+
+    const A = x - x1;
+    const B = y - y1;
+    const C = x2 - x1;
+    const D = y2 - y1;
+
+    const dot = A * C + B * D;
+    const len_sq = C * C + D * D;
+    let param = -1;
+    if (len_sq != 0)
+      //in case of 0 length line
+      param = dot / len_sq;
+
+    let xx, yy: number;
+
+    if (param < 0) {
+      xx = x1;
+      yy = y1;
+    } else if (param > 1) {
+      xx = x2;
+      yy = y2;
+    } else {
+      xx = x1 + param * C;
+      yy = y1 + param * D;
+    }
+
+    const dx = x - xx;
+    const dy = y - yy;
+
+    return Math.sqrt(dx * dx + dy * dy) <= threshold;
   }
 }
 
@@ -298,10 +361,17 @@ export class Rectangle extends Shape {
     webglUtils.gl.drawArrays(webglUtils.gl.TRIANGLES, 0, 6);
   }
 
-  rotate(degree: number): void {}
-
-  isContained(x: number, y: number): Boolean {
-    return false;
+  isContained(coordinate: number[]): boolean {
+    return (
+      ((this.coordinates[0][0] < coordinate[0] &&
+        coordinate[0] < this.coordinates[3][0]) ||
+        (this.coordinates[3][0] < coordinate[0] &&
+          coordinate[0] < this.coordinates[0][0])) &&
+      ((this.coordinates[0][1] < coordinate[1] &&
+        coordinate[1] < this.coordinates[3][1]) ||
+        (this.coordinates[3][1] < coordinate[1] &&
+          coordinate[1] < this.coordinates[0][1]))
+    );
   }
 }
 
@@ -395,10 +465,17 @@ export class Square extends Shape {
     webglUtils.gl.drawArrays(webglUtils.gl.TRIANGLES, 0, 6);
   }
 
-  rotate(degree: number): void {}
-
-  isContained(x: number, y: number): Boolean {
-    return false;
+  isContained(coordinate: number[]): boolean {
+    return (
+      ((this.coordinates[0][0] < coordinate[0] &&
+        coordinate[0] < this.coordinates[3][0]) ||
+        (this.coordinates[3][0] < coordinate[0] &&
+          coordinate[0] < this.coordinates[0][0])) &&
+      ((this.coordinates[0][1] < coordinate[1] &&
+        coordinate[1] < this.coordinates[3][1]) ||
+        (this.coordinates[3][1] < coordinate[1] &&
+          coordinate[1] < this.coordinates[0][1]))
+    );
   }
 }
 
@@ -493,9 +570,7 @@ export class Polygon extends Shape {
     }
   }
 
-  rotate(degree: number): void {}
-
-  isContained(x: number, y: number): Boolean {
+  isContained(coordinate: number[]): boolean {
     return false;
   }
 }

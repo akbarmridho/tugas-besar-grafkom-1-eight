@@ -14,6 +14,8 @@ export const handleOnShapeAdded = (
   const shapesContainer = document.getElementById('shapes-container');
   if (!shapesContainer) return;
 
+  const channel = new BroadcastChannel('container-button-channel');
+
   const shapeDiv = document.createElement('div');
   shapeDiv.className =
     'shape bg-input p-2 rounded-md text-primary-fg text-sm cursor-pointer hover:bg-input-hover flex flex-row gap-x-2 items-center';
@@ -75,6 +77,18 @@ export const handleOnShapeAdded = (
     'items-center',
     'justify-center'
   );
+
+  channel.addEventListener('message', function (e) {
+    const shapeName = e.data as string;
+
+    if (shape.getName() == shapeName) {
+      shapeDiv.classList.add('bg-input-active');
+      shapeDiv.classList.remove('bg-input');
+    } else {
+      shapeDiv.classList.remove('bg-input-active');
+      shapeDiv.classList.add('bg-input');
+    }
+  });
 
   const nameElement = document.createElement('p');
   nameElement.textContent = shape.getName();
