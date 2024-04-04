@@ -7,7 +7,11 @@ import {
   RGB,
   rgbToHex
 } from '../utils';
-import { changeShapeSvgColor, handleOnShapeAdded } from './shapes-list.ts';
+import {
+  changeShapeSvgColor,
+  clearShapeList,
+  handleOnShapeAdded
+} from './shapes-list.ts';
 import { deserializeData, serializeData } from '../utils/serializer.ts';
 import { shapes } from '../state.ts';
 
@@ -139,14 +143,14 @@ export class Tweakpane {
 
               // clear old shapes
               shapes.splice(0, shapes.length);
+              clearShapeList();
 
               // load
               for (const shape of loadedShapes) {
                 shapes.push(shape);
                 handleOnShapeAdded(
                   shape,
-                  rgbToHex(arrayToRgbAndDenormalize(shape.getColor()[0])),
-                  shapes
+                  rgbToHex(arrayToRgbAndDenormalize(shape.getColor()[0]))
                 );
               }
             });

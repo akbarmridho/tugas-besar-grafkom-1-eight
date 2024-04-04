@@ -1,13 +1,16 @@
 import { Shape } from '../shape.ts';
 import { rgbToHex } from '../utils';
 import { deactivateAllShapeBtns } from './shape-btn.ts';
-import { tweakpane } from '../state.ts';
+import { shapes, tweakpane } from '../state.ts';
 
-export const handleOnShapeAdded = (
-  shape: Shape,
-  color: string,
-  allShapes: Shape[]
-) => {
+export const clearShapeList = () => {
+  const shapesContainer = document.getElementById('shapes-container');
+  if (!shapesContainer) return;
+
+  shapesContainer.innerHTML = '';
+};
+
+export const handleOnShapeAdded = (shape: Shape, color: string) => {
   const shapesContainer = document.getElementById('shapes-container');
   if (!shapesContainer) return;
 
@@ -23,7 +26,7 @@ export const handleOnShapeAdded = (
       otherShape.classList.remove('bg-input-active');
       otherShape.classList.add('bg-input');
     });
-    allShapes.forEach((otherShape) => {
+    shapes.forEach((otherShape) => {
       otherShape.setIsActive(false);
     });
     if (!isActive) {

@@ -106,7 +106,7 @@ const onDocumentReady = () => {
         break;
     }
     if (!!newShape) {
-      handleOnShapeAdded(newShape, rgbToHex(selectedColor), shapes);
+      handleOnShapeAdded(newShape, rgbToHex(selectedColor));
     }
   });
 
