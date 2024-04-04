@@ -1,15 +1,9 @@
 import './style.css';
 import { initializeIcons } from './utils/lucide-icons.ts';
 
-import { Tweakpane } from './components/tweakpane.ts';
 import { WebglUtils } from './utils/webgl-utils.ts';
 import { Line, Rectangle, Shape, Square, Polygon } from './shape.ts';
-import {
-  arrayToRgbAndDenormalize,
-  getCoordinate,
-  normalizeRgbColor,
-  rgbToHex
-} from './utils';
+import { getCoordinate, normalizeRgbColor, rgbToHex } from './utils';
 import { handleOnShapeAdded } from './components/shapes-list.ts';
 import {
   onShapeButtonClick,
@@ -19,7 +13,6 @@ import {
 import vertexShaderSource from './glsl/vertex.glsl';
 // @ts-ignore
 import fragmentShaderSource from './fragment/fragment.frag';
-import { deserializeData, serializeData } from './utils/serializer.ts';
 import { shapes, config, tweakpane } from './state.ts';
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -194,7 +187,7 @@ const onDocumentReady = () => {
     }
   });
 
-  canvas.addEventListener('dblclick', (e) => {
+  canvas.addEventListener('dblclick', () => {
     if (config.type == 'POLYGON' && config.isDrawingPolygon) {
       const lastShape = shapes[shapes.length - 1];
       const polygon = lastShape as Polygon;

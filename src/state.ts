@@ -11,3 +11,17 @@ export const config: Config = {
 };
 
 export const tweakpane = new Tweakpane(shapes);
+
+export const getActiveShape = () => {
+  return shapes.find((s) => s.getIsActive()) || null;
+};
+
+export const getActiveVertex = () => {
+  const shape = getActiveShape();
+
+  if (!shape) {
+    return null;
+  }
+
+  return shape.activeVertex;
+};
