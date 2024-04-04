@@ -106,4 +106,35 @@ export class Rectangle extends Shape {
           coordinate[1] < this.coordinates[0][1]))
     );
   }
+
+  onDragMove(coordinate: number[]): void {
+    if (this.dragPivot === null) {
+      return;
+    }
+    /**
+     * Elements order:
+     * top-left, bottom-left, top-right, bottom-right
+     */
+    if (this.dragQuadrant === 'TOP_LEFT') {
+      this.coordinates[0] = [coordinate[0], coordinate[1]];
+      this.coordinates[1] = [coordinate[0], this.dragPivot[1]];
+      this.coordinates[2] = [this.dragPivot[0], coordinate[1]];
+      this.coordinates[3] = [this.dragPivot[0], this.dragPivot[1]];
+    } else if (this.dragQuadrant === 'TOP_RIGHT') {
+      this.coordinates[0] = [this.dragPivot[0], coordinate[1]];
+      this.coordinates[1] = [this.dragPivot[0], this.dragPivot[1]];
+      this.coordinates[2] = [coordinate[0], coordinate[1]];
+      this.coordinates[3] = [coordinate[0], this.dragPivot[1]];
+    } else if (this.dragQuadrant === 'BOTTOM_LEFT') {
+      this.coordinates[0] = [coordinate[0], this.dragPivot[1]];
+      this.coordinates[1] = [coordinate[0], coordinate[1]];
+      this.coordinates[2] = [this.dragPivot[0], this.dragPivot[1]];
+      this.coordinates[3] = [this.dragPivot[0], coordinate[1]];
+    } else if (this.dragQuadrant === 'BOTTOM_RIGHT') {
+      this.coordinates[0] = [this.dragPivot[0], this.dragPivot[1]];
+      this.coordinates[1] = [this.dragPivot[0], coordinate[1]];
+      this.coordinates[2] = [coordinate[0], this.dragPivot[1]];
+      this.coordinates[3] = [coordinate[0], coordinate[1]];
+    }
+  }
 }

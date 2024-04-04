@@ -134,4 +134,8 @@ export class Polygon extends Shape {
         (bottomRight[1] < coordinate[1] && coordinate[1] < topLeft[1]))
     );
   }
+
+  onDragMove(coordinate: number[]): void {
+    //
+  }
 }

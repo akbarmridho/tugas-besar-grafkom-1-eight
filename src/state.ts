@@ -7,7 +7,8 @@ export const shapes: Shape[] = [];
 export const config: Config = {
   type: '',
   isMouseDown: false,
-  isDrawingPolygon: false
+  isDrawingPolygon: false,
+  draggedShape: null
 };
 
 export const tweakpane = new Tweakpane(shapes);

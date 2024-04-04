@@ -1,7 +1,6 @@
 import { WebglUtils } from '../utils/webgl-utils.ts';
 import { flattenMatrix } from '../utils/vector.ts';
 import { shapeType } from '../utils/interfaces.ts';
-import { computeConvexHull } from '../utils/geometry.ts';
 
 export abstract class Shape {
   protected coordinates: number[][];
@@ -20,6 +19,13 @@ export abstract class Shape {
     | 'rectangle-horizontal'
     | 'pentagon'
     | '' = '';
+  protected dragPivot: number[] | null;
+  protected dragQuadrant:
+    | 'TOP_LEFT'
+    | 'TOP_RIGHT'
+    | 'BOTTOM_LEFT'
+    | 'BOTTOM_RIGHT'
+    | '';
 
   protected constructor(
     coordinates?: number[][],
@@ -35,6 +41,8 @@ export abstract class Shape {
     this.type = '';
     this.activeVertex = null;
     this.activeVertexIndex = null;
+    this.dragPivot = null;
+    this.dragQuadrant = '';
   }
 
   getType() {
@@ -202,6 +210,83 @@ export abstract class Shape {
     return this.activeVertex !== null;
   }
 
+  onDragStart(coordinate: number[]) {
+    const [xCentroid, yCentroid] = this.getCentroid();
+    let x: number = xCentroid;
+    let y: number = yCentroid;
+
+    if (coordinate[0] < xCentroid) {
+      if (coordinate[1] < yCentroid) {
+        // the pivot is bottom right
+
+        this.coordinates.forEach((c) => {
+          if (x < c[0]) {
+            x = c[0];
+          }
+
+          if (y < c[1]) {
+            y = c[1];
+          }
+        });
+
+        this.dragPivot = [x, y];
+        this.dragQuadrant = 'TOP_LEFT';
+      } else {
+        // the pivot is top right
+
+        this.coordinates.forEach((c) => {
+          if (x < c[0]) {
+            x = c[0];
+          }
+
+          if (c[1] < y) {
+            y = c[1];
+          }
+        });
+
+        this.dragPivot = [x, y];
+        this.dragQuadrant = 'BOTTOM_LEFT';
+      }
+    } else {
+      if (coordinate[1] < yCentroid) {
+        // the pivot is bottom left
+
+        this.coordinates.forEach((c) => {
+          if (c[0] < x) {
+            x = c[0];
+          }
+
+          if (y < c[1]) {
+            y = c[1];
+          }
+        });
+
+        this.dragPivot = [x, y];
+        this.dragQuadrant = 'TOP_RIGHT';
+      } else {
+        // the pivot is top left
+
+        this.coordinates.forEach((c) => {
+          if (c[0] < x) {
+            x = c[0];
+          }
+
+          if (c[1] < y) {
+            y = c[1];
+          }
+        });
+
+        this.dragPivot = [x, y];
+        this.dragQuadrant = 'BOTTOM_RIGHT';
+      }
+    }
+  }
+
+  onDragEnd() {
+    this.dragPivot = null;
+  }
+
+  abstract onDragMove(coordinate: number[]): void;
   abstract isContained(coordinate: number[]): boolean;
   abstract render(webglUtils: WebglUtils): void;
 }

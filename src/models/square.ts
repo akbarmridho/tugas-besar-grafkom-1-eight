@@ -119,4 +119,53 @@ export class Square extends Shape {
           coordinate[1] < this.coordinates[0][1]))
     );
   }
+
+  onDragMove(coordinate: number[]): void {
+    if (this.dragPivot === null) {
+      return;
+    }
+
+    const width = Math.min(
+      Math.abs(coordinate[0] - this.dragPivot[0]),
+      Math.abs(coordinate[1] - this.dragPivot[1])
+    );
+
+    /**
+     * Elements order:
+     * top-left, bottom-left, top-right, bottom-right
+     */
+    if (this.dragQuadrant === 'TOP_LEFT') {
+      this.coordinates[0] = [
+        this.dragPivot[0] - width,
+        this.dragPivot[1] - width
+      ];
+      this.coordinates[1] = [this.dragPivot[0] - width, this.dragPivot[1]];
+      this.coordinates[2] = [this.dragPivot[0], this.dragPivot[1] - width];
+      this.coordinates[3] = [this.dragPivot[0], this.dragPivot[1]];
+    } else if (this.dragQuadrant === 'TOP_RIGHT') {
+      this.coordinates[0] = [this.dragPivot[0], this.dragPivot[1] - width];
+      this.coordinates[1] = [this.dragPivot[0], this.dragPivot[1]];
+      this.coordinates[2] = [
+        this.dragPivot[0] + width,
+        this.dragPivot[1] - width
+      ];
+      this.coordinates[3] = [this.dragPivot[0] + width, this.dragPivot[1]];
+    } else if (this.dragQuadrant === 'BOTTOM_LEFT') {
+      this.coordinates[0] = [this.dragPivot[0] - width, this.dragPivot[1]];
+      this.coordinates[1] = [
+        this.dragPivot[0] - width,
+        this.dragPivot[1] + width
+      ];
+      this.coordinates[2] = [this.dragPivot[0], this.dragPivot[1]];
+      this.coordinates[3] = [this.dragPivot[0], this.dragPivot[1] + width];
+    } else if (this.dragQuadrant === 'BOTTOM_RIGHT') {
+      this.coordinates[0] = [this.dragPivot[0], this.dragPivot[1]];
+      this.coordinates[1] = [this.dragPivot[0], this.dragPivot[1] + width];
+      this.coordinates[2] = [this.dragPivot[0] + width, this.dragPivot[1]];
+      this.coordinates[3] = [
+        this.dragPivot[0] + width,
+        this.dragPivot[1] + width
+      ];
+    }
+  }
 }
