@@ -235,8 +235,6 @@ export class Tweakpane {
       this.translateBinding.refresh();
       this.scaleFactor = 1;
       this.scaleBinding.refresh();
-
-      this.colorParams.color = { r: 255, g: 0, b: 55 };
     }
   }
 }
