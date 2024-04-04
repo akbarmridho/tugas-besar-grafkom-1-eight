@@ -17,6 +17,7 @@ export const handleOnShapeAdded = (
   shapeDiv.id = shape.getId();
 
   shapeDiv.addEventListener('click', function () {
+    tweakpane.saveLastActive();
     const isActive = this.classList.contains('bg-input-active');
     shapesContainer.querySelectorAll('.shape').forEach((otherShape) => {
       otherShape.classList.remove('bg-input-active');

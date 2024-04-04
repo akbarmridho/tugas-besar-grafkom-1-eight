@@ -11,10 +11,6 @@ import { changeShapeSvgColor, handleOnShapeAdded } from './shapes-list.ts';
 import { deserializeData, serializeData } from '../utils/serializer.ts';
 import { shapes } from '../state.ts';
 
-const COLOR_PARAMS = {
-  color: { r: 255, g: 0, b: 55 }
-};
-
 const SAVE_BUTTON_PARAMS = {
   title: 'Save to file'
 };
@@ -36,7 +32,11 @@ export class Tweakpane {
   translateParams = {
     translate: { x: 0, y: 0 }
   };
+  colorParams = {
+    color: { r: 255, g: 0, b: 55 }
+  };
   scaleFactor = 1;
+  public prevActive = '';
 
   constructor(shapes: Shape[]) {
     this.shapes = shapes;
@@ -46,16 +46,19 @@ export class Tweakpane {
       container: tweakpaneContainer
     });
 
+    this.prevActive = '';
+
     this.colorBinding = this.pane
-      .addBinding(COLOR_PARAMS, 'color', {
+      .addBinding(this.colorParams, 'color', {
         picker: 'inline',
         expanded: true
       })
-      .on('change', (ev) =>
+      .on('change', (ev) => {
         // @ts-ignore
-        this.changeColor(ev.value)
-      );
-    this.changeColor(COLOR_PARAMS.color);
+        this.changeColor(ev.value);
+      });
+
+    this.changeColor(this.colorParams.color);
 
     this.translateBinding = this.pane
       .addBinding(this.translateParams, 'translate', {
@@ -158,7 +161,17 @@ export class Tweakpane {
   changeColor = (color: RGB) => {
     this.selectedColor = color;
     this.changeShapeProperties((shape) => {
-      shape.setColor(normalizeRgbColor(color));
+      if (shape.getName() !== this.prevActive) {
+        this.prevActive = shape.getName();
+        return;
+      }
+
+      if (shape.activeVertex !== null) {
+        shape.setActiveVertexColor(normalizeRgbColor(color));
+      } else {
+        shape.setColor(normalizeRgbColor(color));
+      }
+
       changeShapeSvgColor(shape);
     });
   };
@@ -181,6 +194,16 @@ export class Tweakpane {
     });
   };
 
+  saveLastActive() {
+    const activeShape = this.shapes.find((s) => s.getIsActive());
+
+    if (!activeShape) {
+      this.prevActive = '';
+    } else {
+      this.prevActive = activeShape.getName();
+    }
+  }
+
   refreshParams() {
     const activeShape = this.shapes.find((s) => s.getIsActive());
 
@@ -193,6 +216,17 @@ export class Tweakpane {
       this.translateBinding.refresh();
       this.scaleFactor = activeShape.getScaleFactor();
       this.scaleBinding.refresh();
+
+      const colors = activeShape.getColor();
+
+      const colorIdx = activeShape.activeVertexIndex || 0;
+
+      this.colorParams.color = {
+        r: colors[colorIdx][0] * 255,
+        g: colors[colorIdx][1] * 255,
+        b: colors[colorIdx][2] * 255
+      };
+      this.colorBinding.refresh();
     } else {
       this.translateParams.translate = {
         x: 0,
@@ -201,6 +235,8 @@ export class Tweakpane {
       this.translateBinding.refresh();
       this.scaleFactor = 1;
       this.scaleBinding.refresh();
+
+      this.colorParams.color = { r: 255, g: 0, b: 55 };
     }
   }
 }

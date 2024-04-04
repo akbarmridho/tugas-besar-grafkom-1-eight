@@ -10,6 +10,7 @@ export abstract class Shape {
   protected rotation: number;
   protected isActive: boolean;
   public activeVertex: number[] | null;
+  public activeVertexIndex: number | null;
   protected type: shapeType;
   protected id: string = '';
   protected name: string = '';
@@ -33,6 +34,7 @@ export abstract class Shape {
     this.isActive = isActive || false;
     this.type = '';
     this.activeVertex = null;
+    this.activeVertexIndex = null;
   }
 
   getType() {
@@ -80,6 +82,12 @@ export abstract class Shape {
     }
   }
 
+  setActiveVertexColor(newColor: number[]) {
+    if (this.activeVertexIndex !== null) {
+      this.colors[this.activeVertexIndex] = newColor;
+    }
+  }
+
   getIsActive() {
     return this.isActive;
   }
@@ -89,6 +97,7 @@ export abstract class Shape {
 
     if (!isActive) {
       this.activeVertex = null;
+      this.activeVertexIndex = null;
     }
   }
 
@@ -173,19 +182,22 @@ export abstract class Shape {
   setActiveVertex(clickCoordinate: number[]): boolean {
     const threshold = 100; // 10^2
     let closest: number[] | null = null;
+    let closestIndex: number | null = null;
 
-    for (const coordinate of this.coordinates) {
+    for (const [i, coordinate] of this.coordinates.entries()) {
       const dist =
         (coordinate[0] - clickCoordinate[0]) ** 2 +
         (coordinate[1] - clickCoordinate[1]) ** 2;
 
       if (dist < threshold) {
         closest = coordinate;
+        closestIndex = i;
         break;
       }
     }
 
     this.activeVertex = closest;
+    this.activeVertexIndex = closestIndex;
 
     return this.activeVertex !== null;
   }
@@ -295,15 +307,13 @@ export class Rectangle extends Shape {
     Rectangle.count += 1;
     this.id = 'rectangle-' + Rectangle.count;
     this.name = 'Rectangle ' + Rectangle.count;
-    for (let i = 0; i < 6; i++) {
-      this.colors.push(color);
-    }
     /**
      * Elements order:
      * top-left, bottom-left, top-right, bottom-right
      */
     for (let i = 0; i < 4; i++) {
       this.coordinates.push(startCoordinate);
+      this.colors.push(color);
     }
   }
 
@@ -329,8 +339,25 @@ export class Rectangle extends Shape {
       return;
     }
 
+    /**
+     * Elements order:
+     * top-left, bottom-left, top-right, bottom-right
+     */
+
     // color for every point
-    webglUtils.renderColor(this.getFlattenedColor(), 4);
+    webglUtils.renderColor(
+      new Float32Array(
+        flattenMatrix([
+          this.colors[0],
+          this.colors[2],
+          this.colors[1],
+          this.colors[1],
+          this.colors[2],
+          this.colors[3]
+        ])
+      ),
+      4
+    );
 
     const x1 = this.coordinates[0][0];
     const y1 = this.coordinates[0][1];
@@ -340,17 +367,17 @@ export class Rectangle extends Shape {
     // draw two triangle
     const coordinates = new Float32Array([
       x1,
-      y1,
+      y1, // top left
       x2,
-      y1,
+      y1, // top right
       x1,
-      y2,
+      y2, // bottom left
       x1,
-      y2,
+      y2, // bottom left
       x2,
-      y1,
+      y1, // top right
       x2,
-      y2
+      y2 // bottom right
     ]);
 
     webglUtils.renderVertex(coordinates, 2);
@@ -386,11 +413,9 @@ export class Square extends Shape {
     Square.count += 1;
     this.id = 'square-' + Square.count;
     this.name = 'Square ' + Square.count;
-    for (let i = 0; i < 6; i++) {
-      this.colors.push(color);
-    }
     for (let i = 0; i < 4; i++) {
       this.coordinates.push(startCoordinate);
+      this.colors.push(color);
     }
   }
 
@@ -433,8 +458,25 @@ export class Square extends Shape {
       return;
     }
 
+    /**
+     * Elements order:
+     * top-left, bottom-left, top-right, bottom-right
+     */
+
     // color for every point
-    webglUtils.renderColor(this.getFlattenedColor(), 4);
+    webglUtils.renderColor(
+      new Float32Array(
+        flattenMatrix([
+          this.colors[0],
+          this.colors[2],
+          this.colors[1],
+          this.colors[1],
+          this.colors[2],
+          this.colors[3]
+        ])
+      ),
+      4
+    );
 
     const x1 = this.coordinates[0][0];
     const y1 = this.coordinates[0][1];

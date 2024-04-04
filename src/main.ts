@@ -152,10 +152,12 @@ const onDocumentReady = () => {
 
     let shapeFound = false;
     let newActiveSet = false;
+    let newActiveVertex = false;
+    tweakpane.saveLastActive();
 
     for (const shape of shapes) {
       if (shape.getIsActive() && shape.setActiveVertex(coordinate)) {
-        // the if statement has side effect
+        newActiveVertex = true;
         shapeFound = true;
       } else if (shape.isContained(coordinate) && !newActiveSet) {
         shape.setIsActive(true);
@@ -168,7 +170,7 @@ const onDocumentReady = () => {
       }
     }
 
-    if (newActiveSet) {
+    if (newActiveSet || newActiveVertex) {
       tweakpane.refreshParams();
     }
 
