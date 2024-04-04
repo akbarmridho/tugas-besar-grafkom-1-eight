@@ -82,7 +82,7 @@ export class Polygon extends Shape {
   }
 
   setIsDrawing(isDrawing: boolean) {
-    this.isDrawing = false;
+    this.isDrawing = isDrawing;
   }
 
   render(webglUtils: WebglUtils) {
@@ -134,6 +134,8 @@ export class Polygon extends Shape {
   }
 
   onDragMove(coordinate: number[]): void {
-    //
+    if (this.activeVertexIndex !== null) {
+      this.coordinates[this.activeVertexIndex] = coordinate;
+    }
   }
 }
