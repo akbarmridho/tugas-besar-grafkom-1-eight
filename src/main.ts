@@ -298,7 +298,9 @@ const onDocumentReady = () => {
         deleteShape(activeShapes[0]);
         deleteShape(activeShapes[1]);
         coordinates.forEach((coordinate) => polygon.addCoordinate(coordinate));
+        polygon.computeConvexHull();
         polygon.setIsDrawing(false);
+        polygon.setColor(activeShapes[0].getColor()[0]);
         shapes.push(polygon);
         handleOnShapeAdded(polygon, rgbToHex(tweakpane.selectedColor));
       }

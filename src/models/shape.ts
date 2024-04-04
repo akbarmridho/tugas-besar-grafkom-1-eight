@@ -89,8 +89,9 @@ export abstract class Shape {
   }
 
   setColor(newColor: number[]) {
-    for (let i = 0; i < this.colors.length; i++) {
-      this.colors[i] = newColor;
+    this.colors = [];
+    for (let i = 0; i < this.coordinates.length; i++) {
+      this.colors.push(newColor);
     }
   }
 

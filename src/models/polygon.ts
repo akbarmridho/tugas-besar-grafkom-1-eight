@@ -46,6 +46,13 @@ export class Polygon extends Shape {
 
   computeConvexHull() {
     this.coordinates = computeConvexHull(this.coordinates);
+    if (
+      this.coordinates.length > this.colors.length &&
+      this.colors.length > 0
+    ) {
+      const color = this.colors[0];
+      this.setColor(color);
+    }
   }
 
   finishDrawing() {
