@@ -185,10 +185,6 @@ export abstract class Shape {
       }
     }
 
-    if (closest !== null) {
-      console.log('got closest vertex');
-    }
-
     this.activeVertex = closest;
 
     return this.activeVertex !== null;

@@ -11,9 +11,7 @@ import {
   rgbToHex
 } from './utils';
 import { handleOnShapeAdded } from './components/shapes-list.ts';
-import { Config } from './utils/interfaces.ts';
 import {
-  deactivateAllShapeBtns,
   onShapeButtonClick,
   setupCursorButtonClick
 } from './components/shape-btn.ts';
@@ -22,6 +20,7 @@ import vertexShaderSource from './glsl/vertex.glsl';
 // @ts-ignore
 import fragmentShaderSource from './fragment/fragment.frag';
 import { deserializeData, serializeData } from './utils/serializer.ts';
+import { shapes, config, tweakpane } from './state.ts';
 
 document.addEventListener('DOMContentLoaded', function () {
   onDocumentReady();
@@ -29,18 +28,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
 initializeIcons();
 
-const shapes: Shape[] = [];
-
 const onDocumentReady = () => {
   // init variables
-  const config: Config = {
-    type: '',
-    isMouseDown: false,
-    isDrawingPolygon: false
-  };
-  const tweakpane = new Tweakpane(shapes);
   const canvas = document.getElementById('canvas') as HTMLCanvasElement;
   if (!canvas) return;
+
+  const channel = new BroadcastChannel('container-button-channel');
 
   // init gl
   const gl = canvas.getContext('webgl');
@@ -76,11 +69,11 @@ const onDocumentReady = () => {
 
   gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
 
-  setupCursorButtonClick(config);
-  onShapeButtonClick('line-btn', 'LINE', config);
-  onShapeButtonClick('square-btn', 'SQUARE', config);
-  onShapeButtonClick('rectangle-btn', 'RECTANGLE', config);
-  onShapeButtonClick('polygon-btn', 'POLYGON', config);
+  setupCursorButtonClick();
+  onShapeButtonClick('line-btn', 'LINE');
+  onShapeButtonClick('square-btn', 'SQUARE');
+  onShapeButtonClick('rectangle-btn', 'RECTANGLE');
+  onShapeButtonClick('polygon-btn', 'POLYGON');
 
   // canvas logic
   canvas.addEventListener('mousedown', (e: MouseEvent) => {
@@ -120,13 +113,7 @@ const onDocumentReady = () => {
         break;
     }
     if (!!newShape) {
-      handleOnShapeAdded(
-        newShape,
-        rgbToHex(selectedColor),
-        shapes,
-        config,
-        tweakpane
-      );
+      handleOnShapeAdded(newShape, rgbToHex(selectedColor), shapes);
     }
   });
 
@@ -161,8 +148,6 @@ const onDocumentReady = () => {
     config.isMouseDown = false;
   });
 
-  const channel = new BroadcastChannel('container-button-channel');
-
   canvas.addEventListener('click', (e) => {
     if (config.type !== '') {
       return;
@@ -170,16 +155,26 @@ const onDocumentReady = () => {
 
     const coordinate = getCoordinate(canvas, e);
 
+    let shapeFound = false;
+
     for (const shape of shapes) {
       if (shape.getIsActive() && shape.setActiveVertex(coordinate)) {
         // the if statement has side effect
+        shapeFound = true;
       } else if (shape.isContained(coordinate)) {
         shape.setIsActive(true);
         shape.setActiveVertex(coordinate);
         channel.postMessage(shape.getName());
+        shapeFound = true;
       } else {
         shape.setIsActive(false);
       }
+    }
+
+    tweakpane.refreshParams();
+
+    if (!shapeFound) {
+      channel.postMessage(null);
     }
   });
 
@@ -235,9 +230,7 @@ const onDocumentReady = () => {
               handleOnShapeAdded(
                 shape,
                 rgbToHex(arrayToRgbAndDenormalize(shape.getColor()[0])),
-                shapes,
-                config,
-                tweakpane
+                shapes
               );
             }
           });
@@ -248,7 +241,7 @@ const onDocumentReady = () => {
       });
   });
 
-  canvas.onclick = (e: MouseEvent) => {
+  canvas.addEventListener('click', (e) => {
     if (config.type == 'POLYGON' && config.isDrawingPolygon) {
       const coordinate = getCoordinate(canvas, e);
       const lastShape = shapes[shapes.length - 1];
@@ -256,9 +249,9 @@ const onDocumentReady = () => {
       const polygon = lastShape as Polygon;
       polygon.addCoordinate(coordinate);
     }
-  };
+  });
 
-  canvas.ondblclick = (e: MouseEvent) => {
+  canvas.addEventListener('dblclick', (e) => {
     if (config.type == 'POLYGON' && config.isDrawingPolygon) {
       const lastShape = shapes[shapes.length - 1];
       const polygon = lastShape as Polygon;
@@ -266,7 +259,7 @@ const onDocumentReady = () => {
       polygon.finishDrawing();
       config.isDrawingPolygon = false;
     }
-  };
+  });
 
   window.addEventListener('keydown', (e: KeyboardEvent) => {
     if (
@@ -281,7 +274,7 @@ const onDocumentReady = () => {
     }
   });
 
-  canvas.oncontextmenu = (e: MouseEvent) => {
+  canvas.addEventListener('contextmenu', (e) => {
     const activePolygon = shapes.find(
       (shape) => shape.getType() === 'POLYGON' && shape.getIsActive()
     ) as Polygon;
@@ -293,5 +286,5 @@ const onDocumentReady = () => {
 
       activePolygon.appendCoordinate(coordinate);
     }
-  };
+  });
 };

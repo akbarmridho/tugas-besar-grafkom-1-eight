@@ -1,20 +1,15 @@
 import { Shape } from '../shape.ts';
 import { rgbToHex } from '../utils';
-import { Config } from '../utils/interfaces.ts';
 import { deactivateAllShapeBtns } from './shape-btn.ts';
-import { Tweakpane } from './tweakpane.ts';
+import { tweakpane } from '../state.ts';
 
 export const handleOnShapeAdded = (
   shape: Shape,
   color: string,
-  allShapes: Shape[],
-  config: Config,
-  tweakpane: Tweakpane
+  allShapes: Shape[]
 ) => {
   const shapesContainer = document.getElementById('shapes-container');
   if (!shapesContainer) return;
-
-  const channel = new BroadcastChannel('container-button-channel');
 
   const shapeDiv = document.createElement('div');
   shapeDiv.className =
@@ -34,18 +29,10 @@ export const handleOnShapeAdded = (
       this.classList.add('bg-input-active');
       this.classList.remove('bg-input');
       shape.setIsActive(true);
-      deactivateAllShapeBtns(config);
-
-      const centroid = shape.getCentroid();
-      tweakpane.translateParams.translate = {
-        x: centroid[0] - 400,
-        y: centroid[1] - 400
-      };
-      tweakpane.translateBinding.refresh();
-
-      tweakpane.scaleFactor = shape.getScaleFactor();
-      tweakpane.scaleBinding.refresh();
     }
+
+    deactivateAllShapeBtns();
+    tweakpane.refreshParams();
   });
 
   const iconElement = document.createElement('div');
@@ -78,10 +65,12 @@ export const handleOnShapeAdded = (
     'justify-center'
   );
 
-  channel.addEventListener('message', function (e) {
-    const shapeName = e.data as string;
+  const channel = new BroadcastChannel('container-button-channel');
 
-    if (shape.getName() == shapeName) {
+  channel.addEventListener('message', function (e) {
+    const shapeName = (e.data as string) || null;
+
+    if (shape.getName() === shapeName) {
       shapeDiv.classList.add('bg-input-active');
       shapeDiv.classList.remove('bg-input');
     } else {

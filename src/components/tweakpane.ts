@@ -1,4 +1,4 @@
-import { BladeApi, ButtonApi, Pane } from 'tweakpane';
+import { ButtonApi, Pane } from 'tweakpane';
 import { BindingApi } from '@tweakpane/core';
 import { Shape } from '../shape.ts';
 import { normalizeRgbColor, RGB } from '../utils';
@@ -112,4 +112,27 @@ export class Tweakpane {
       if (shape.getIsActive()) callback(shape);
     });
   };
+
+  refreshParams() {
+    const activeShape = this.shapes.find((s) => s.getIsActive());
+
+    if (activeShape) {
+      const centroid = activeShape.getCentroid();
+      this.translateParams.translate = {
+        x: centroid[0] - 400,
+        y: centroid[1] - 400
+      };
+      this.translateBinding.refresh();
+      this.scaleFactor = activeShape.getScaleFactor();
+      this.scaleBinding.refresh();
+    } else {
+      this.translateParams.translate = {
+        x: 0,
+        y: 0
+      };
+      this.translateBinding.refresh();
+      this.scaleFactor = 1;
+      this.scaleBinding.refresh();
+    }
+  }
 }

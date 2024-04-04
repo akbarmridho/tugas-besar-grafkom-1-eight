@@ -1,15 +1,12 @@
-import { shapeType, Config } from '../utils/interfaces.ts';
-export const onShapeButtonClick = (
-  id: string,
-  typeName: shapeType,
-  config: Config
-) => {
+import { shapeType } from '../utils/interfaces.ts';
+import { config } from '../state.ts';
+export const onShapeButtonClick = (id: string, typeName: shapeType) => {
   const btn = document.getElementById(id);
   if (!btn) return;
   btn.onclick = (e: MouseEvent) => {
     e.preventDefault();
     const isActive = btn.classList.contains('bg-input-active');
-    deactivateAllShapeBtns(config);
+    deactivateAllShapeBtns();
     if (!isActive) {
       config.type = typeName;
       btn.classList.add('bg-input-active');
@@ -17,16 +14,16 @@ export const onShapeButtonClick = (
   };
 };
 
-export const setupCursorButtonClick = (config: Config) => {
+export const setupCursorButtonClick = () => {
   const btn = document.getElementById('cursor-btn');
   if (!btn) return;
   btn.onclick = (e: MouseEvent) => {
     e.preventDefault();
-    deactivateAllShapeBtns(config);
+    deactivateAllShapeBtns();
   };
 };
 
-export const deactivateAllShapeBtns = (config: Config) => {
+export const deactivateAllShapeBtns = () => {
   const shapeBtnContainer = document.getElementById('shape-btn-container');
   if (!shapeBtnContainer) return;
   shapeBtnContainer
