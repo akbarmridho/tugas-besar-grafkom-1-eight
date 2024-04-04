@@ -86,4 +86,22 @@ export class Line extends Shape {
 
     return Math.sqrt(dx * dx + dy * dy) <= threshold;
   }
+
+  onDragMove(coordinate: number[]): void {
+    if (this.dragPivot === null) {
+      return;
+    }
+
+    if (
+      this.coordinates[0][0] === this.dragPivot[0] &&
+      this.coordinates[0][1] === this.dragPivot[1]
+    ) {
+      this.coordinates[1] = coordinate;
+    } else if (
+      this.coordinates[1][0] === this.dragPivot[0] &&
+      this.coordinates[1][1] === this.dragPivot[1]
+    ) {
+      this.coordinates[0] = coordinate;
+    }
+  }
 }

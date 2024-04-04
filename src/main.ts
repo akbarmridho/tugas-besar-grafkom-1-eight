@@ -115,6 +115,21 @@ const onDocumentReady = () => {
           config.isDrawingPolygon = true;
         }
         break;
+      case '':
+        const activeShape = getActiveShape();
+
+        if (activeShape === null) {
+          return;
+        }
+
+        if (!activeShape.setActiveVertex(coordinate)) {
+          return;
+        }
+
+        activeShape.onDragStart(coordinate);
+        config.draggedShape = activeShape;
+
+        break;
     }
     if (!!newShape) {
       handleOnShapeAdded(newShape, rgbToHex(selectedColor));
@@ -134,6 +149,10 @@ const onDocumentReady = () => {
       polygon.updateEndCoordinate(coordinate);
     }
 
+    if (config.draggedShape !== null) {
+      config.draggedShape.onDragMove(coordinate);
+    }
+
     if (!config.isMouseDown) return;
 
     if (config.type == 'LINE' && lastShape instanceof Line) {
@@ -150,14 +169,17 @@ const onDocumentReady = () => {
 
   canvas.addEventListener('mouseup', () => {
     config.isMouseDown = false;
+
+    if (config.draggedShape !== null) {
+      config.draggedShape.onDragEnd();
+      config.draggedShape = null;
+    }
   });
 
   canvas.addEventListener('click', (e) => {
     if (config.type !== '') {
       return;
     }
-
-    e.preventDefault();
 
     const coordinate = getCoordinate(canvas, e);
 

@@ -120,4 +120,8 @@ export class Polygon extends Shape {
     });
     return edges;
   }
+
+  onDragMove(coordinate: number[]): void {
+    //
+  }
 }
